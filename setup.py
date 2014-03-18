@@ -2,6 +2,12 @@ import os
 
 from setuptools import setup, find_packages
 
+import pdb;pdb.set_trace()
+os_file = os.__file__
+path_list = os_file.split('/')
+project_name = path_list[3]
+command_path = '/opt/webapp/' + project_name + '/'
+working_directory = command_path + 'src/' + project_name + '/'
 here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.txt')) as f:
     README = f.read()
