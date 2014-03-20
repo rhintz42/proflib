@@ -1,5 +1,6 @@
 *.swp
 *.egg-info
+*.pyc
 hello.txt
 profiled_debug.txt
 profile/
