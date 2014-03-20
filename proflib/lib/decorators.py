@@ -1,64 +1,59 @@
-#import logging
 from functools import wraps
-#import threading
 import sys
 import os
+import time
 
-#logger = logging.getLogger(__name__)
 
-Thing = 0
+# Can learn about all of the variables the frame object has at this page:
+#   http://docs.python.org/2/library/inspect.html#inspect-types
+
+Lock = 0
 
 class persistent_locals(object):
 
     def __init__(self, func):
         self.locals_map = {}
-        self._locals = {}
-        self._frame = {}
-        self._function_name = ''
-        self._filename = ''
-        self._line_number = 0
         self.func = func
-        self.test = 0
-        global Thing
-        if Thing is None:
-            Thing = 0
+        self.num_functions_called = 0
+        global Lock
+        if Lock is None:
+            Lock = 0
 
     def __call__(self, *args, **kwargs):
-        global Thing
-        if Thing == 1:
+        global Lock
+        if Lock == 1:
             try:
                 res = self.func(*args, **kwargs)
             except:
                 res = None
             return res
         else:
-            Thing = 1;
+            Lock = 1;
 
         def tracer(frame, event, arg):
+            timeStarted = time.time()
             if event=='return':
-                self.locals_map[frame.f_code.co_name] = {
+                function_name = frame.f_code.co_name
+                self.num_functions_called = self.num_functions_called + 1
+                self.locals_map[function_name+str(self.num_functions_called)] = {
                     'frame': frame,
                     'filename': frame.f_code.co_filename,
                     'line_number': frame.f_lineno,
                     'locals': frame.f_locals.copy(),
+                    'function_name': function_name,
+                    'time': timeStarted,
+                    'called_by': frame.f_back.f_code.co_name,
+                    'pos': self.num_functions_called,
                 }
-                self.test = self.test + 1
 
-        # tracer is activated on next call, return or exception
-        #import pdb;pdb.set_trace()
-        #threading.setprofile(tracer)
         sys.setprofile(tracer)
         try:
-            # trace the function call
             res = self.func(*args, **kwargs)
         except:
-            res = self.func(args)#*args, **kwargs)
+            res = self.func(args)
         finally:
-            # disable tracer and replace with old one
-            #threading.setprofile(None)
             sys.setprofile(None)
 
-            #import pdb;pdb.set_trace()
             path_split = os.path.dirname(os.path.abspath(__file__)).split('/')
             virtualenv_name = path_split[3]
             project_name = path_split[5]
@@ -67,29 +62,35 @@ class persistent_locals(object):
 
             if not os.path.isdir(profile_folder): os.makedirs(profile_folder)
 
-            # PRINT THE TIME OF WHEN THE CALL WAS MADE
             f = open(profile_folder + 'profiled_debug.txt', 'a')
-            for function_name in self.locals_map:
-                frame = self.locals_map[function_name]
+            banned_functions = ['__call__']
+
+            f.write("####################################################################\n")
+            #import pdb;pdb.set_trace()
+            for key in self.locals_map:
+                frame = self.locals_map[key]
+                if frame['function_name'] in banned_functions:
+                    continue
+                f.write("====================================================================\n")
                 f.write("--------------------------------------------------------------------\n")
-                f.write("%s:%s:%s\n" % ( frame['filename'], function_name, frame['line_number'] ))
+                f.write("%s:%s:%s\n" % ( frame['filename'], frame['function_name'], frame['line_number'] ))
                 f.write("--------------------------------------------------------------------\n")
-                for key in frame['locals']:
-                    f.write("%s= %s\n" % (key, frame['locals'][key]))
+                f.write("Called By: %s\n" % (frame['called_by']))
+                f.write("--------------------------------------------------------------------\n")
+                f.write("Num Function Called: %s\n" % (frame['pos']))
+                f.write("--------------------------------------------------------------------\n")
+                for var_name in frame['locals']:
+                    f.write("%s= %s\n" % (var_name, frame['locals'][var_name]))
+                f.write("====================================================================\n")
                 f.write("\n")
                 f.write("\n")
                 f.write("\n")
+            f.write("####################################################################\n")
             f.close()
-        #import pdb;pdb.set_trace()
-        Thing = 0
+        Lock = 0
+        self.locals_map = {}
+        self.num_functions_called = 0
         return res
-
-    def clear_locals(self):
-        self._locals = {}
-
-    @property
-    def locals(self):
-        return self._locals
 
 '''
 @persistent_locals

@@ -14,6 +14,7 @@ def bar():
     return b
 
 @view_config(route_name='home', renderer='json')
+@persistent_locals
 def my_view(request):
     print("!Nice!")
     a = foo()
