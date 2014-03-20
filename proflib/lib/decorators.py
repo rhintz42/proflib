@@ -7,6 +7,19 @@ import time
 # Can learn about all of the variables the frame object has at this page:
 #   http://docs.python.org/2/library/inspect.html#inspect-types
 
+# TODO
+#   * Create a Func Model
+#       * Will store all of the functions and such
+#       * Will have a parent and children
+#       * Need to make sure every time a function is called, it's accounted
+#           for
+#       * Should be organized something like this:
+#           func_name: {
+#               func_called
+#   * Create an organize function that will organize things better so that
+#       functions called by parent functions will be "Inside" their parents
+
+
 Lock = 0
 
 class persistent_locals(object):
@@ -14,7 +27,7 @@ class persistent_locals(object):
     def __init__(self, func):
         self.locals_map = {}
         self.func = func
-        self.num_functions_called = 0
+        self.functions_in_order = []
         global Lock
         if Lock is None:
             Lock = 0
@@ -33,9 +46,12 @@ class persistent_locals(object):
         def tracer(frame, event, arg):
             timeStarted = time.time()
             if event=='return':
+                pos = len(self.functions_in_order)
                 function_name = frame.f_code.co_name
-                self.num_functions_called = self.num_functions_called + 1
-                self.locals_map[function_name+str(self.num_functions_called)] = {
+                key = function_name+str(pos)
+                self.functions_in_order.append(key)
+                self.locals_map[key] = {
+                #self.locals_map[function_name] = {
                     'frame': frame,
                     'filename': frame.f_code.co_filename,
                     'line_number': frame.f_lineno,
@@ -43,7 +59,7 @@ class persistent_locals(object):
                     'function_name': function_name,
                     'time': timeStarted,
                     'called_by': frame.f_back.f_code.co_name,
-                    'pos': self.num_functions_called,
+                    'pos': pos,
                 }
 
         sys.setprofile(tracer)
@@ -67,7 +83,8 @@ class persistent_locals(object):
 
             f.write("####################################################################\n")
             #import pdb;pdb.set_trace()
-            for key in self.locals_map:
+            #for key in self.locals_map:
+            for key in self.functions_in_order:
                 frame = self.locals_map[key]
                 if frame['function_name'] in banned_functions:
                     continue
@@ -89,7 +106,7 @@ class persistent_locals(object):
             f.close()
         Lock = 0
         self.locals_map = {}
-        self.num_functions_called = 0
+        self.functions_in_order = []
         return res
 
 '''

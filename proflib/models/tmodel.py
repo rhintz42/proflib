@@ -2,7 +2,7 @@ from proflib.lib.decorators import persistent_locals
 import sys
 import os
 
-@persistent_locals
+#@persistent_locals
 def cool():
     rollup = {
         'data': [
