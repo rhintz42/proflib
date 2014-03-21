@@ -2,13 +2,14 @@ from functools import wraps
 import sys
 import os
 import time
-
+from proflib.models.frame_list import FrameList
+from proflib.models.frame import Frame
 
 # Can learn about all of the variables the frame object has at this page:
 #   http://docs.python.org/2/library/inspect.html#inspect-types
 
 # TODO
-#   * Create a Func Model
+#   * Create a Frame Model
 #       * Will store all of the functions and such
 #       * Will have a parent and children
 #       * Need to make sure every time a function is called, it's accounted
@@ -21,7 +22,36 @@ import time
 
 
 Lock = 0
+Lock2 = 0
 
+def persistent_locals2(func):
+    """ 
+    This decorator will check if my wrapper works.
+
+    """
+    func.frame_list = FrameList()
+    func.locals_map = {}
+    func.functions_in_order = []
+
+    def tracer(frame, event, arg):
+        if event=='return':
+            func.frame_list.add_frame(frame)
+
+    @wraps(func)
+    def wrapped(*args, **kwargs):
+        sys.setprofile(tracer)
+        try:
+            response = func(*args, **kwargs)
+        finally:
+            sys.setprofile(None)
+
+        func.frame_list.build_hierarchy()
+        return response
+
+    return wrapped
+
+
+'''
 class persistent_locals(object):
 
     def __init__(self, func):
@@ -64,7 +94,7 @@ class persistent_locals(object):
 
         sys.setprofile(tracer)
         try:
-            res = self.func(*args, **kwargs)
+            res = self.func(object, *args, **kwargs)
         except:
             res = self.func(args)
         finally:
@@ -108,7 +138,7 @@ class persistent_locals(object):
         self.locals_map = {}
         self.functions_in_order = []
         return res
-
+'''
 '''
 @persistent_locals
 def debug_profile(func):
