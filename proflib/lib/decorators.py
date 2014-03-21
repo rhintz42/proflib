@@ -24,6 +24,9 @@ from proflib.models.frame import Frame
 Lock = 0
 Lock2 = 0
 
+# Should reset the frame list if this value is anything other than 0
+TIMES_CALLED = 0
+
 def persistent_locals2(func):
     """ 
     This decorator will check if my wrapper works.
@@ -46,6 +49,7 @@ def persistent_locals2(func):
             sys.setprofile(None)
 
         func.frame_list.build_hierarchy()
+        #import pdb;pdb.set_trace()
         return response
 
     return wrapped

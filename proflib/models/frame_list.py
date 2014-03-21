@@ -43,6 +43,7 @@ class FrameList(object):
         return self.ordered_functions_list[::-1]
 
     def rec_build_hierarchy(self, reversed_order_list, root_frame, pos):
+        #import pdb;pdb.set_trace()
         while pos < self.num_frames:
             current_frame = self.frame_map[reversed_order_list[pos]]
             if current_frame.called_by_function_name != root_frame.function_name:
@@ -64,6 +65,8 @@ class FrameList(object):
         root_frame = self.frame_map[root_key]
         pos = 0
         while pos < self.num_frames:
-            pos = self.rec_build_hierarchy(reversed_order_list, root_frame, pos+1)
+            pos = self.rec_build_hierarchy(reversed_order_list, root_frame, pos+1) + 1
+            if pos < self.num_frames:
+                root_frame = self.frame_map[reversed_order_list[pos]]
         
         return root_frame
