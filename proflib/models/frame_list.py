@@ -62,8 +62,8 @@ class FrameList(object):
         reversed_order_list = self.reverse_order_functions_list
         root_key = reversed_order_list[0]
         root_frame = self.frame_map[root_key]
-        pos = self.rec_build_hierarchy(reversed_order_list, root_frame, 1)
-        import pdb;pdb.set_trace()
+        pos = 0
+        while pos < self.num_frames:
+            pos = self.rec_build_hierarchy(reversed_order_list, root_frame, pos+1)
         
-        pass
-
+        return root_frame
