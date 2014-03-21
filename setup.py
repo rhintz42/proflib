@@ -2,7 +2,7 @@ import os
 
 from setuptools import setup, find_packages
 
-import pdb;pdb.set_trace()
+#import pdb;pdb.set_trace()
 os_file = os.__file__
 path_list = os_file.split('/')
 project_name = path_list[3]
