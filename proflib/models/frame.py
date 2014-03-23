@@ -7,19 +7,26 @@ class Frame(object):
     Encapsulates a function and contains all the local variables and such,
         formatted in the correct way for easy copy and paste into tests
     """
-    # AD IDs to this so that Can Remain Unique
-    def __init__(self, *args, **kwargs):
-        self._init_with_frame(args[0], **kwargs)
+    # POSSIBLY ADD IDs to this so that Can Remain Unique
+    #def __init__(self, *args, **kwargs):
+    def __init__(self, frame, **kwargs):
+        self._init_with_frame(frame, **kwargs)
 
     def _init_with_frame(self, frame, **kwargs):
+        self.wrapper_function_name = 'wrapped'
+
         self.parent = kwargs['parent'] if 'parent' in kwargs else None
         self.children = kwargs['children'] if 'children' in kwargs else []
         self.frame = frame
+        #import pdb;pdb.set_trace()
         self.function_name = frame.f_code.co_name
         self.filename = frame.f_code.co_filename
         self.local_variables = frame.f_locals.copy()
         self.time = time.time()
-        self.called_by_function_name = frame.f_back.f_code.co_name
+        if frame.f_back.f_code.co_name == self.wrapper_function_name:
+            self.called_by_function_name = frame.f_back.f_back.f_code.co_name
+        else:
+            self.called_by_function_name = frame.f_back.f_code.co_name
         self.pos_called_in = kwargs['pos'] if 'pos' in kwargs else 0
 
     """ GETTERS """
@@ -96,13 +103,19 @@ class Frame(object):
     def time(self, value):
         self._time = value
 
+    # WHAT ARE THE FRAME OBJECTS WE ARE INSERTING?
+    #   Are the this class objects, or actual frames?
     def prepend_child(self, frame):
-        self.children.insert(0, frame)
+        if frame.function_name != self.wrapper_function_name:
+            self.children.insert(0, frame)
     
-    def to_dict(self):
+    def to_dict(self, depth=2):
+        if depth <= 0:
+            return None
+        new_depth = depth - 1
         return {
             'called_by_function_name': self.called_by_function_name,
-            'children': [c.to_dict() for c in self.children],
+            'children': [c.to_dict(depth=new_depth) for c in self.children],
             'filename': self.filename,
             'function_name': self.function_name,
             'local_variables': self.local_variables,

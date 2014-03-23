@@ -7,7 +7,6 @@ def fo():
     c = 30
     return c
 
-#@persistent_locals
 @persistent_locals2
 def foo():
     a = 10
@@ -17,7 +16,7 @@ def foo():
     h = tt()
     return a
 
-#@persistent_locals
+@persistent_locals2
 def ba():
     d = 20
     return d

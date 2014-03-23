@@ -4,6 +4,7 @@ import os
 import time
 from proflib.models.frame_list import FrameList
 from proflib.models.frame import Frame
+from outlib.lib.wout import output_to_logger
 
 # Can learn about all of the variables the frame object has at this page:
 #   http://docs.python.org/2/library/inspect.html#inspect-types
@@ -21,8 +22,10 @@ from proflib.models.frame import Frame
 #       functions called by parent functions will be "Inside" their parents
 
 
+# This lock is here to prevent circular recursion with a function that has the
+#   persistent_locals wrapper calling another function with the
+#   persistent_locals wrapper
 Lock = 0
-Lock2 = 0
 
 # Should reset the frame list if this value is anything other than 0
 TIMES_CALLED = 0
@@ -33,8 +36,9 @@ def persistent_locals2(func):
 
     """
     func.frame_list = FrameList()
-    func.locals_map = {}
-    func.functions_in_order = []
+    global Lock
+    if Lock is None:
+        Lock = 0
 
     def tracer(frame, event, arg):
         if event=='return':
@@ -42,6 +46,17 @@ def persistent_locals2(func):
 
     @wraps(func)
     def wrapped(*args, **kwargs):
+        global Lock
+        if Lock == 1:
+            try:
+                #import pdb;pdb.set_trace()
+                res = func(*args, **kwargs)
+            except:
+                res = None
+            return res
+        else:
+            Lock = 1;
+
         sys.setprofile(tracer)
         try:
             response = func(*args, **kwargs)
@@ -49,7 +64,13 @@ def persistent_locals2(func):
             sys.setprofile(None)
 
         func.frame_list.build_hierarchy()
+
+        output_to_logger(func.frame_list.to_json_output(depth=4))
         #import pdb;pdb.set_trace()
+
+        #CLEAR FRAME_LIST. IT SEEMS TO BE CACHED IF NOT
+        func.frame_list = FrameList()
+        Lock = 0
         return response
 
     return wrapped

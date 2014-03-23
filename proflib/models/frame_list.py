@@ -12,6 +12,7 @@ class FrameList(object):
         # Ordered by when function finished
         self._ordered_functions_list = []
         self._frame_map = {}
+        self._root_frames = []
 
     def add_frame(self, frame):
         function_name = frame.f_code.co_name
@@ -39,16 +40,20 @@ class FrameList(object):
         return len(self.ordered_functions_list)
 
     @property
+    def root_frames(self):
+        return self._root_frames
+
+    @property
     def reverse_order_functions_list(self):
         return self.ordered_functions_list[::-1]
 
     def rec_build_hierarchy(self, reversed_order_list, root_frame, pos):
-        #import pdb;pdb.set_trace()
         while pos < self.num_frames:
             current_frame = self.frame_map[reversed_order_list[pos]]
             if current_frame.called_by_function_name != root_frame.function_name:
                 return pos-1
 
+            #import pdb;pdb.set_trace()
             root_frame.prepend_child(current_frame)
 
             pos = self.rec_build_hierarchy(reversed_order_list, current_frame, pos+1)
@@ -61,12 +66,32 @@ class FrameList(object):
         function_map = {}
 
         reversed_order_list = self.reverse_order_functions_list
+        if len(reversed_order_list) == 0:
+            return
         root_key = reversed_order_list[0]
         root_frame = self.frame_map[root_key]
+        self._root_frames.append(root_frame)
         pos = 0
         while pos < self.num_frames:
             pos = self.rec_build_hierarchy(reversed_order_list, root_frame, pos+1) + 1
             if pos < self.num_frames:
                 root_frame = self.frame_map[reversed_order_list[pos]]
+                self._root_frames.append(root_frame)
+
         
         return root_frame
+
+    # THE CHILDREN LIST SHOULD BE AN OBJECT (MAYBE FRAME_LIST?)
+    # NEED TO FIGURE OUT HOW TO GET CORRECT CALLED BY INSTEAD OF JUST "WRAPPED"
+    #   * Possibly check for that function name, then look to find realy
+    #   function
+    #       * Should be above Wrapped function name
+    def to_json_output(self, depth=2):
+        if depth <= 0:
+            return []
+
+        output_list = []
+        for frame in self.root_frames:
+            output_list.append(frame.to_dict(depth=depth))
+
+        return output_list
