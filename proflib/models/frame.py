@@ -7,6 +7,8 @@ class Frame(object):
     Encapsulates a function and contains all the local variables and such,
         formatted in the correct way for easy copy and paste into tests
     """
+    # NEED TO ADD SETTING THE PARENT WHEN ADDING CHILD
+
     # POSSIBLY ADD IDs to this so that Can Remain Unique
     #def __init__(self, *args, **kwargs):
     def __init__(self, frame, **kwargs):
@@ -18,7 +20,6 @@ class Frame(object):
         self.parent = kwargs['parent'] if 'parent' in kwargs else None
         self.children = kwargs['children'] if 'children' in kwargs else []
         self.frame = frame
-        #import pdb;pdb.set_trace()
         self.function_name = frame.f_code.co_name
         self.filename = frame.f_code.co_filename
         self.local_variables = frame.f_locals.copy()

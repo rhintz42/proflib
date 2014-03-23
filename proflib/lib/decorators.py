@@ -31,50 +31,52 @@ Lock = 0
 TIMES_CALLED = 0
 
 # ADD PARAMETER FOR THE DEPTH WANT TO GO
-def persistent_locals(func):
-    """ 
-    This decorator will check if my wrapper works.
+def persistent_locals(depth=2):
+    def actual_decorator(func):
+        """ 
+        This decorator will check if my wrapper works.
 
-    """
-    func.frame_list = FrameList()
-    global Lock
-    if Lock is None:
-        Lock = 0
-
-    def tracer(frame, event, arg):
-        if event=='return':
-            func.frame_list.add_frame(frame)
-
-    @wraps(func)
-    def wrapped(*args, **kwargs):
-        global Lock
-        if Lock == 1:
-            try:
-                #import pdb;pdb.set_trace()
-                res = func(*args, **kwargs)
-            except:
-                res = None
-            return res
-        else:
-            Lock = 1;
-
-        sys.setprofile(tracer)
-        try:
-            response = func(*args, **kwargs)
-        finally:
-            sys.setprofile(None)
-
-        func.frame_list.build_hierarchy()
-
-        output_to_logger(func.frame_list.to_json_output(depth=4))
-        #import pdb;pdb.set_trace()
-
-        #CLEAR FRAME_LIST. IT SEEMS TO BE CACHED IF NOT
+        """
         func.frame_list = FrameList()
-        Lock = 0
-        return response
+        global Lock
+        if Lock is None:
+            Lock = 0
 
-    return wrapped
+        def tracer(frame, event, arg):
+            if event=='return':
+                func.frame_list.add_frame(frame)
+
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            global Lock
+            if Lock == 1:
+                try:
+                    #import pdb;pdb.set_trace()
+                    res = func(*args, **kwargs)
+                except:
+                    res = None
+                return res
+            else:
+                Lock = 1;
+
+            sys.setprofile(tracer)
+            try:
+                response = func(*args, **kwargs)
+            finally:
+                sys.setprofile(None)
+
+            func.frame_list.build_hierarchy()
+
+            output_to_logger(func.frame_list.to_json_output(depth=depth))
+            #import pdb;pdb.set_trace()
+
+            #CLEAR FRAME_LIST. IT SEEMS TO BE CACHED IF NOT
+            func.frame_list = FrameList()
+            Lock = 0
+            return response
+
+        return wrapped
+    return actual_decorator
 
 
 '''
