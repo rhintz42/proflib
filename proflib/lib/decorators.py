@@ -30,7 +30,8 @@ Lock = 0
 # Should reset the frame list if this value is anything other than 0
 TIMES_CALLED = 0
 
-def persistent_locals2(func):
+# ADD PARAMETER FOR THE DEPTH WANT TO GO
+def persistent_locals(func):
     """ 
     This decorator will check if my wrapper works.
 
