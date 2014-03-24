@@ -39,6 +39,36 @@ Last, install ProfLib, which is the actual library
     pip install git+git://github.com/rhintz42/proflib.git#egg=proflib
 
 
+How to Use
+----------
+Using this library is extremely easy, all you need to do is import the library
+to your file and add the decorator above the function you wish to profile
+
+Add this line to the top of the file that has the function you wish to profile:
+
+    from proflib.lib.decorators import persistent_locals
+
+Then, add the wrapper right above the function you wish to profile:
+
+    @persistent_locals()
+
+
+Example:
+
+    from proflib.lib.decorators import persistent_locals
+
+    @persistent_locals()
+    def test_function(cool):
+        return cool
+
+
+
+MORE COMPLICATED STUFF
+======================
+If you want to do more complicated stuff with this library, go for it! Here
+are some guided suggestions
+
+
 Local Installation
 ------------------
 If you'd like to hack on this library, feel free to! Here are steps to download
@@ -94,26 +124,3 @@ the proflib folder and type this command
 This will install proflib in the site-packages folder in that python
 environment, so you can now change code in your proflib directory, and it will
 affect that project!
-
-
-How to Use
-----------
-Using this library is extremely easy, all you need to do is import the library
-to your file and add the decorator above the function you wish to profile
-
-Add this line to the top of the file that has the function you wish to profile:
-
-    from proflib.lib.decorators import persistent_locals
-
-Then, add the wrapper right above the function you wish to profile:
-
-    @persistent_locals()
-
-
-Example:
-
-    from proflib.lib.decorators import persistent_locals
-
-    @persistent_locals()
-    def test_function(cool):
-        return cool
