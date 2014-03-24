@@ -18,13 +18,14 @@ NEXT STEPS
     * Change "time" to "time_completed"
 * Add Docs
     * Add docs that go over
-        * How to install
-        * How to use
-        * Sample output and such
-        * Show the tests
-        * Go through the Public API
-            * Classes
-            * Functions
+        * How to install            - DONE
+        * How to use                - DONE
+        * Video on how to use       - 
+        * Sample output and such    - 
+        * Show the tests            - 
+        * Go through the Public API - 
+            * Classes               - 
+            * Functions             -
         * Add comments to the Private Functions
 * Allow user to specify content to display
     * Variables and such
