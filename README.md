@@ -39,6 +39,63 @@ Last, install ProfLib, which is the actual library
     pip install git+git://github.com/rhintz42/proflib.git#egg=proflib
 
 
+Local Installation
+------------------
+If you'd like to hack on this library, feel free to! Here are steps to download
+and use this library locally:
+
+Create a new python virtual environment
+
+    virtualenv proflib
+
+Go into the new folder created
+
+    cd proflib
+
+Activate your Environment
+
+    source bin/activate
+
+Create a source folder
+
+    mkdir src
+
+Go into the src folder
+
+    cd src
+
+Git clone the repository
+
+    git clone https://github.com/rhintz42/proflib.git
+
+Go into the new folder
+
+    cd proflib
+
+Install OutLib
+
+    pip install git+git://github.com/rhintz42/outlib.git#egg=outlib
+
+Install all the dependencies and create the egg-file
+
+    python setup.py develop
+
+Install all the test dependencies
+
+    pip install -r test-requirements.txt
+
+Everything should be installed for this project, but now you need to install
+this library in your project. Goto the virtual environment of the project you
+want to use this library in and activate that environment. Then, go back to
+the proflib folder and type this command
+
+    python setup.py develop
+
+This will install proflib in the site-packages folder in that python
+environment, so you can now change code in your proflib directory, and it will
+affect that project!
+
+
 How to Use
 ----------
 Using this library is extremely easy, all you need to do is import the library
