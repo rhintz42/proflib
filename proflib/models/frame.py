@@ -9,6 +9,10 @@ class Frame(object):
     """
     # NEED TO ADD SETTING THE PARENT WHEN ADDING CHILD
 
+    # BE ABLE TO ADD FORMATTING FOR DISPLAYING
+    #   * Maybe add something between children functions
+    #   * Should probably be in the format library
+
     # POSSIBLY ADD IDs to this so that Can Remain Unique
     #def __init__(self, *args, **kwargs):
     def __init__(self, frame, **kwargs):

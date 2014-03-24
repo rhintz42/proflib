@@ -51,7 +51,6 @@ def persistent_locals(depth=2):
             global Lock
             if Lock == 1:
                 try:
-                    #import pdb;pdb.set_trace()
                     res = func(*args, **kwargs)
                 except:
                     res = None
@@ -68,7 +67,6 @@ def persistent_locals(depth=2):
             func.frame_list.build_hierarchy()
 
             output_to_logger(func.frame_list.to_json_output(depth=depth))
-            #import pdb;pdb.set_trace()
 
             #CLEAR FRAME_LIST. IT SEEMS TO BE CACHED IF NOT
             func.frame_list = FrameList()
@@ -140,7 +138,6 @@ class persistent_locals(object):
             banned_functions = ['__call__']
 
             f.write("####################################################################\n")
-            #import pdb;pdb.set_trace()
             #for key in self.locals_map:
             for key in self.functions_in_order:
                 frame = self.locals_map[key]

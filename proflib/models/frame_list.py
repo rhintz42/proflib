@@ -53,7 +53,6 @@ class FrameList(object):
             if current_frame.called_by_function_name != root_frame.function_name:
                 return pos-1
 
-            #import pdb;pdb.set_trace()
             root_frame.prepend_child(current_frame)
 
             pos = self.rec_build_hierarchy(reversed_order_list, current_frame, pos+1)
