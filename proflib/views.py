@@ -3,9 +3,11 @@ from proflib.lib.decorators import persistent_locals
 from proflib.models.frame_list import FrameList
 from proflib.models.frame import Frame
 
+
 def fo():
     c = 30
     return c
+
 
 @persistent_locals()
 def foo():
@@ -16,16 +18,19 @@ def foo():
     h = tt()
     return a
 
+
 @persistent_locals(1)
 def ba(var):
     d = var
     return d
+
 
 #@persistent_locals
 def tt():
     z = 20
     f = fo()
     return z
+
 
 #@persistent_locals
 def bar(tr):
@@ -38,6 +43,7 @@ def bar(tr):
         k = ba('z')
         
     return b
+
 
 @view_config(route_name='home', renderer='json')
 def my_view(request):
