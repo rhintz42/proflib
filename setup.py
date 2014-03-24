@@ -19,10 +19,15 @@ requires = [
     'pyramid_chameleon',
     'pyramid_debugtoolbar',
     'waitress',
+    'outlib'
     ]
 
+github_dependencies = [
+    'git+git://github.com/rhintz42/outlib.git#egg=outlib'
+]
+
 setup(name='proflib',
-      version='0.0',
+      version='1.0.1',
       description='proflib',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
@@ -39,6 +44,7 @@ setup(name='proflib',
       include_package_data=True,
       zip_safe=False,
       install_requires=requires,
+      dependency_links=github_dependencies,
       tests_require=requires,
       test_suite="proflib",
       entry_points="""\

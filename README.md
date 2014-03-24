@@ -63,6 +63,8 @@ Example:
 
 
 
+
+
 MORE COMPLICATED STUFF
 ======================
 If you want to do more complicated stuff with this library, go for it! Here
@@ -101,10 +103,6 @@ Git clone the repository
 Go into the new folder
 
     cd proflib
-
-Install OutLib
-
-    pip install git+git://github.com/rhintz42/outlib.git#egg=outlib
 
 Install all the dependencies and create the egg-file
 
