@@ -150,3 +150,33 @@ Try to follow the naming convention of
     test_<file_name_of_thing_testing>.py
 
 And try to look at a few tests to see the conventions used for tests
+
+
+How to Make This Library a Dependency for your Python Project
+-------------------------------------------------------------
+If you have a standard python project that has a setup.py file, it's easy to
+make proflib be one of its dependencies. Just follow these steps:
+
+First, add a new array "github_dependencies" above the "setup" method, and
+add 'git+git://github.com/rhintz42/proflib.git#egg=proflib' to the array
+
+    github_dependencies = [
+        'git+git://github.com/rhintz42/proflib.git#egg=proflib'
+    ]
+
+Next, add the library to your 'requires' array
+
+    requires = [
+        # The ... signifies all the other packages you require
+        ...,
+        'proflib'
+    ]
+
+Last, add the kwarg 'dependency_links=github_dependcies,' to your setup method
+
+    setup(name='<your_project>',
+          ...,
+          dependency_links=github_dependencies,
+          ...,
+          )
+
