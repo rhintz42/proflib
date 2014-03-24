@@ -31,10 +31,12 @@ search through to see what variables may be valid to use as your mocks.
 Installation
 ------------
 First, install OutLib, a dependency for proflib
-* pip install git+git://github.com/rhintz42/outlib.git#egg=outlib
+    
+    pip install git+git://github.com/rhintz42/outlib.git#egg=outlib
 
 Last, install ProfLib, which is the actual library
-* pip install git+git://github.com/rhintz42/proflib.git#egg=proflib
+
+    pip install git+git://github.com/rhintz42/proflib.git#egg=proflib
 
 
 How to Use
