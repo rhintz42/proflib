@@ -1,5 +1,7 @@
 NEXT STEPS
 ==========
+* Change persistent_locals to prof
+    * Need to change everywhere that has persistent_locals to prof
 * Add more tests
     * Should be testing every class in all files
         * Do this before adding more content to this
