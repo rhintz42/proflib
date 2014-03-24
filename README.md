@@ -51,7 +51,7 @@ Then, add the wrapper right above the function you wish to profile:
     @persistent_locals()
 
 
-* Example:
+Example:
 
     from proflib.lib.decorators import persistent_locals
 
