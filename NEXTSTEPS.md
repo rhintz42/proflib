@@ -30,3 +30,6 @@ NEXT STEPS
     * Summary
     * Test
     * etc.
+* Be able to specify only showing functions in a certain folder
+    * Create library for getting all the functions from a project/folder/file
+    * Can do things recursively
