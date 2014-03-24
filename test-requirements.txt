@@ -1,0 +1,6 @@
+pytest-cov
+WebTest
+pyquery
+pylint
+mock
+tox

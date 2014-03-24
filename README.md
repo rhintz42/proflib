@@ -30,11 +30,7 @@ search through to see what variables may be valid to use as your mocks.
 
 Installation
 ------------
-First, install OutLib, a dependency for proflib
-    
-    pip install git+git://github.com/rhintz42/outlib.git#egg=outlib
-
-Last, install ProfLib, which is the actual library
+To install ProfLib
 
     pip install git+git://github.com/rhintz42/proflib.git#egg=proflib
 
@@ -122,3 +118,35 @@ the proflib folder and type this command
 This will install proflib in the site-packages folder in that python
 environment, so you can now change code in your proflib directory, and it will
 affect that project!
+
+
+How to Run The Tests
+--------------------
+If you hack on this locally (Which you definitely should!), you should run and
+add tests! To run the tests, first install the necessary dependencies (If you
+haven't done so already):
+
+    pip install -r test-requirements.txt
+
+After that, just run this command and your tests should run
+
+    py.test
+
+
+How to Add Tests
+----------------
+To add tests, just go into the correct folder and add tests!
+
+To add Unit Tests, goto this folder:
+
+    proflib/tests/unit/
+
+If you want to add a Unit Test to a model, goto this folder:
+
+    proflib/tests/unit/models
+
+Try to follow the naming convention of
+
+    test_<file_name_of_thing_testing>.py
+
+And try to look at a few tests to see the conventions used for tests
