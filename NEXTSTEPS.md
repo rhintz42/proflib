@@ -14,6 +14,16 @@ NEXT STEPS
     * Make variable names more understandable
     * Add some docstrings
     * Change "time" to "time_completed"
+* Add Docs
+    * Add docs that go over
+        * How to install
+        * How to use
+        * Sample output and such
+        * Show the tests
+        * Go through the Public API
+            * Classes
+            * Functions
+        * Add comments to the Private Functions
 * Allow user to specify content to display
     * Variables and such
 * Allow user to specify how to display the data
