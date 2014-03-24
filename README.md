@@ -35,3 +35,26 @@ First, install OutLib, a dependency for proflib
 
 Last, install ProfLib, which is the actual library
 * pip install git+git://github.com/rhintz42/proflib.git#egg=proflib
+
+
+How to Use
+----------
+Using this library is extremely easy, all you need to do is import the library
+to your file and add the decorator above the function you wish to profile
+
+Add this line to the top of the file that has the function you wish to profile:
+
+    from proflib.lib.decorators import persistent_locals
+
+Then, add the wrapper right above the function you wish to profile:
+
+    @persistent_locals()
+
+
+* Example:
+
+    from proflib.lib.decorators import persistent_locals
+
+    @persistent_locals()
+    def test_function(cool):
+        return cool
