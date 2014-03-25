@@ -17,6 +17,9 @@ class Frame(object):
     # TODO: Change the kwargs to variables of the map that I actually want to
     #   allow
     def __init__(self, frame, **kwargs):
+        """
+        Init method for the Frame class
+        """
         self._init_with_frame(frame, **kwargs)
 
     # TODO: Add setters for each variable

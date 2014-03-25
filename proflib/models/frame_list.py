@@ -8,46 +8,88 @@ class FrameList(object):
     Encapsulates a function and contains all the local variables and such,
         formatted in the correct way for easy copy and paste into tests
     """
+
     def __init__(self, *args, **kwargs):
-        # Ordered by when function finished
+        """
+        The init function for the FrameList class
+        """
         self._ordered_functions_list = []
         self._frame_map = {}
         self._root_frames = []
 
     def add_frame(self, frame):
+        """
+        Adds a frame to this class, adding it to the:
+            * ordered_functions_list 
+            * frame_map
+        When adding to the frame_map, creates a new Frame object, encapsulating
+            the Python Frame Object
+        """
         function_name = frame.f_code.co_name
-        key = function_name + str(self.num_frames)
+        key = get_function_key(function_name, self.num_frames)
         self.add_to_ordered_functions_list(key)
         self._frame_map[key] = Frame(frame, pos=self.num_frames)
         
-    def add_to_ordered_functions_list(self, value):
-        self._ordered_functions_list.append(value)
+    def add_to_ordered_functions_list(self, function_key):
+        """
+        Adds the function_key to the ordered_functions_list
+        """
+        self._ordered_functions_list.append(function_key)
 
-    @property
-    def find_frame(self, function_name):
+    def get_function_key(function_name, num_frames):
+        """
+        Returns the function_key
+        """
+        return function_name + str(num_frames)
+
+    def find_frames(self, function_name):
+        """
+        Finds all the function frames that have the specified function_name
+        """
         pass
 
     @property
     def frame_map(self):
+        """
+        Returns the frame_map
+        """
         return self._frame_map
     
     @property
     def ordered_functions_list(self):
+        """
+        Returns a list of all the function_key's, ordered by when the function
+            finished
+        """
         return self._ordered_functions_list
     
     @property
     def num_frames(self):
+        """
+        Returns the Number of Frames Created
+        """
         return len(self.ordered_functions_list)
 
     @property
     def root_frames(self):
+        """
+        Returns all of the root_frames, or all the frames that had the wrapped
+            function on them that don't have an ancestor that had the wrapped
+            function applied to them
+        """
         return self._root_frames
 
     @property
     def reverse_order_functions_list(self):
+        """
+        Return a list that is in reversed order of the ordered_functions_list
+        """
         return self.ordered_functions_list[::-1]
 
     def rec_build_hierarchy(self, reversed_order_list, root_frame, pos):
+        """
+        The recursive wrapper for build_hierarchy
+        """
         while pos < self.num_frames:
             current_frame = self.frame_map[reversed_order_list[pos]]
             if current_frame.called_by_function_name != root_frame.function_name:
@@ -62,6 +104,10 @@ class FrameList(object):
         return pos
 
     def build_hierarchy(self):
+        """
+        Build a hierarchy of Frames to Frames
+        Returns the root_frame
+        """
         function_map = {}
 
         reversed_order_list = self.reverse_order_functions_list
@@ -80,12 +126,12 @@ class FrameList(object):
         
         return root_frame
 
-    # THE CHILDREN LIST SHOULD BE AN OBJECT (MAYBE FRAME_LIST?)
-    # NEED TO FIGURE OUT HOW TO GET CORRECT CALLED BY INSTEAD OF JUST "WRAPPED"
-    #   * Possibly check for that function name, then look to find realy
-    #   function
-    #       * Should be above Wrapped function name
+    # TODO: THE CHILDREN LIST SHOULD BE AN OBJECT (MAYBE FRAME_LIST?)
     def to_json_output(self, depth=2):
+        """
+        Return a list of Frames that have been converted to dicts for easy
+            output
+        """
         if depth <= 0:
             return []
 
