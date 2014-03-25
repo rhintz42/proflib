@@ -42,18 +42,18 @@ to your file and add the decorator above the function you wish to profile
 
 Add this line to the top of the file that has the function you wish to profile:
 
-    from proflib.lib.decorators import persistent_locals
+    from proflib.lib.decorators import prof
 
 Then, add the wrapper right above the function you wish to profile:
 
-    @persistent_locals()
+    @prof()
 
 
 Example:
 
-    from proflib.lib.decorators import persistent_locals
+    from proflib.lib.decorators import prof
 
-    @persistent_locals()
+    @prof()
     def test_function(cool):
         return cool
 

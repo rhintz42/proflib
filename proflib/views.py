@@ -1,15 +1,16 @@
 from pyramid.view import view_config
-from proflib.lib.decorators import persistent_locals
+from proflib.lib.decorators import prof
 from proflib.models.frame_list import FrameList
 from proflib.models.frame import Frame
 
 
+@prof()
 def fo():
     c = 30
     return c
 
 
-@persistent_locals()
+@prof()
 def foo():
     a = 10
     e = bar(True)
@@ -19,20 +20,20 @@ def foo():
     return a
 
 
-@persistent_locals(1)
+@prof(1)
 def ba(var):
     d = var
     return d
 
 
-#@persistent_locals
+@prof()
 def tt():
     z = 20
     f = fo()
     return z
 
 
-#@persistent_locals
+@prof()
 def bar(tr):
     b = 20
     if tr:

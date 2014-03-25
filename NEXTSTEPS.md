@@ -1,7 +1,6 @@
 NEXT STEPS
 ==========
-* Change persistent_locals to prof
-    * Need to change everywhere that has persistent_locals to prof
+* Add Comments
 * Add more tests
     * Should be testing every class in all files
         * Do this before adding more content to this
@@ -36,3 +35,10 @@ NEXT STEPS
 * Be able to specify only showing functions in a certain folder
     * Create library for getting all the functions from a project/folder/file
     * Can do things recursively
+
+
+
+
+
+* Change persistent_locals to prof  - DONE
+    * Need to change everywhere that has persistent_locals to prof
