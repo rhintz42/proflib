@@ -2,12 +2,16 @@ NEXT STEPS
 ==========
 * Add more tests
     * Should be testing every class in all files
-        * Do this before adding more content to this
+        * Frame                     - DONE
+        * FrameList                 - 
     * For the decorator, create test methods that have the decorator applied 
-        to test what happend
+        to test what happend        - 
 * Address all of the comments that I've put
     * Like creating a class for the list of frames for the children, or just
         making those lists into frame-lists
+* Have all variables in the models set by set functions
+    * Frame                         - DONE
+    * FrameList
 * Refactor
     * Duplicate Code
     * Make algorithms better
@@ -34,6 +38,7 @@ NEXT STEPS
 * Be able to specify only showing functions in a certain folder
     * Create library for getting all the functions from a project/folder/file
     * Can do things recursively
+* Add formatting
 
 
 
