@@ -3,6 +3,13 @@ import os
 import time
 from proflib.models.frame import Frame
 
+
+def get_function_key(function_name, num_frames):
+    """
+    Returns the function_key
+    """
+    return function_name + str(num_frames)
+
 class FrameList(object):
     """
     Encapsulates a function and contains all the local variables and such,
@@ -35,12 +42,6 @@ class FrameList(object):
         Adds the function_key to the ordered_functions_list
         """
         self._ordered_functions_list.append(function_key)
-
-    def get_function_key(function_name, num_frames):
-        """
-        Returns the function_key
-        """
-        return function_name + str(num_frames)
 
     def find_frames(self, function_name):
         """
