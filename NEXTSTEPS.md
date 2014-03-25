@@ -1,6 +1,5 @@
 NEXT STEPS
 ==========
-* Add Comments
 * Add more tests
     * Should be testing every class in all files
         * Do this before adding more content to this
@@ -39,6 +38,8 @@ NEXT STEPS
 
 
 
-
+DONE
+====
 * Change persistent_locals to prof  - DONE
     * Need to change everywhere that has persistent_locals to prof
+* Add Comments
