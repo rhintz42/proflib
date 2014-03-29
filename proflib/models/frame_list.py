@@ -53,21 +53,28 @@ class FrameList(object):
     def frame_map(self):
         """
         Returns the frame_map
+
+        The _frame_map consists of:
+        * Keys: The keys are the frame's function_name & position finished in
+        * Values: The Frame object associated with the function_name
         """
         return self._frame_map
     
     @property
     def ordered_functions_list(self):
         """
-        Returns a list of all the function_key's, ordered by when the function
-            finished
+        Returns the _ordered_functions_list
+
+        The _ordered_functions_list is list of all the function_key's, ordered
+            by when the function finished execution (i.e. returned)
         """
         return self._ordered_functions_list
     
     @property
     def num_frames(self):
         """
-        Returns the Number of Frames Created
+        Returns the length of the _ordered_functions_list, which is the number
+            of Frames Created
         """
         return len(self.ordered_functions_list)
 
@@ -87,7 +94,7 @@ class FrameList(object):
         """
         return self.ordered_functions_list[::-1]
 
-    def rec_build_hierarchy(self, reversed_order_list, root_frame, pos):
+    def _rec_build_hierarchy(self, reversed_order_list, root_frame, pos):
         """
         The recursive wrapper for build_hierarchy
         """
@@ -98,7 +105,7 @@ class FrameList(object):
 
             root_frame.prepend_child(current_frame)
 
-            pos = self.rec_build_hierarchy(reversed_order_list, current_frame, pos+1)
+            pos = self._rec_build_hierarchy(reversed_order_list, current_frame, pos+1)
 
             pos = pos + 1
 
@@ -107,6 +114,7 @@ class FrameList(object):
     def build_hierarchy(self):
         """
         Build a hierarchy of Frames to Frames
+
         Returns the root_frame
         """
         function_map = {}
@@ -119,7 +127,7 @@ class FrameList(object):
         self._root_frames.append(root_frame)
         pos = 0
         while pos < self.num_frames:
-            pos = self.rec_build_hierarchy(reversed_order_list, root_frame, pos+1) + 1
+            pos = self._rec_build_hierarchy(reversed_order_list, root_frame, pos+1) + 1
             if pos < self.num_frames:
                 root_frame = self.frame_map[reversed_order_list[pos]]
                 self._root_frames.append(root_frame)
