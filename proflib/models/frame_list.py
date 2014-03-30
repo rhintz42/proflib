@@ -3,7 +3,7 @@ import os
 import time
 from proflib.models.frame import Frame
 
-
+#TODO: Add this to a lib instead of having it here
 def get_function_key(function_name, num_frames):
     """
     Returns the function_key
@@ -24,7 +24,7 @@ class FrameList(object):
         self._frame_map = {}
         self._root_frames = []
 
-    def add_frame(self, frame):
+    def add_frame(self, py_frame):
         """
         Adds a frame to this class, adding it to the:
             * ordered_functions_list 
@@ -32,12 +32,12 @@ class FrameList(object):
         When adding to the frame_map, creates a new Frame object, encapsulating
             the Python Frame Object
         """
-        function_name = frame.f_code.co_name
+        function_name = py_frame.f_code.co_name
         key = get_function_key(function_name, self.num_frames)
-        self.add_to_ordered_functions_list(key)
-        self._frame_map[key] = Frame(frame, pos=self.num_frames)
+        self._append_to_ordered_functions_list(key)
+        self._frame_map[key] = Frame(py_frame, pos=self.num_frames)
         
-    def add_to_ordered_functions_list(self, function_key):
+    def _append_to_ordered_functions_list(self, function_key):
         """
         Adds the function_key to the ordered_functions_list
         """
@@ -87,6 +87,15 @@ class FrameList(object):
         """
         return self._root_frames
 
+    def _append_to_root_frames(self, root_frame):
+        """
+        Appends to the _root_frames list
+
+        Returns self.root_frames
+        """
+        self._root_frames.append(root_frame)
+        return self.root_frames
+
     @property
     def reverse_order_functions_list(self):
         """
@@ -130,10 +139,10 @@ class FrameList(object):
             pos = self._rec_build_hierarchy(reversed_order_list, root_frame, pos+1) + 1
             if pos < self.num_frames:
                 root_frame = self.frame_map[reversed_order_list[pos]]
-                self._root_frames.append(root_frame)
+                self._append_to_root_frames(root_frame)
 
         
-        return root_frame
+        return self.root_frames
 
     # TODO: THE CHILDREN LIST SHOULD BE AN OBJECT (MAYBE FRAME_LIST?)
     def to_json_output(self, depth=2):

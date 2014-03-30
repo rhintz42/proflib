@@ -39,6 +39,7 @@ NEXT STEPS
     * Create library for getting all the functions from a project/folder/file
     * Can do things recursively
 * Add formatting
+* Look into John's implementation for unit/integration testing
 
 
 
@@ -48,3 +49,8 @@ DONE
 * Change persistent_locals to prof  - DONE
     * Need to change everywhere that has persistent_locals to prof
 * Add Comments
+
+
+
+
+

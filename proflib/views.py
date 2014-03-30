@@ -10,7 +10,7 @@ def fo():
     return c
 
 
-@prof()
+@prof(3)
 def foo():
     a = 10
     e = bar(True)
