@@ -76,22 +76,22 @@ class TestFrameList(unittest.TestCase):
         assert len(frame_list.frame_map) == 1
         assert frame_list.frame_map['test_function_name0']
 
-    def test_append_to_ordered_functions_list(self):
+    def test_append_key_to_ordered_functions_list(self):
         from proflib.models.frame_list import FrameList
 
         frame_list = FrameList()
 
-        frame_list._append_to_ordered_functions_list('test_function_name42')
+        frame_list._append_key_to_ordered_functions_list('test_function_name42')
         
         assert len(frame_list.ordered_functions_list) == 1
         assert frame_list.ordered_functions_list[0] == 'test_function_name42'
 
-    def test_append_to_ordered_functions_list(self):
+    def test_append_key_to_ordered_functions_list(self):
         from proflib.models.frame_list import FrameList
 
         frame_list = FrameList()
 
-        frame_list._append_to_ordered_functions_list('test_function_name42')
+        frame_list._append_key_to_ordered_functions_list('test_function_name42')
         
         assert len(frame_list.ordered_functions_list) == 1
         assert frame_list.ordered_functions_list[0] == 'test_function_name42'
@@ -265,3 +265,51 @@ class TestFrameList(unittest.TestCase):
 
         assert frame_list.to_json_output()[0]['function_name'] == 'test_function_name'
 
+    #------------------------------- find_frames ------------------------------
+    def test_find_frames_simple(self):
+        from proflib.models.frame_list import FrameList
+
+        frame_list = FrameList()
+
+        frames = frame_list.find_frames('test_function_name')
+
+        assert len(frames) == 0
+
+    def test_find_frames_1_frame_added(self):
+        from proflib.models.frame_list import FrameList
+
+        frame_list = FrameList()
+
+        frame_list.add_frame(PyFrameMock())
+
+        frames = frame_list.find_frames('test_function_name')
+
+        assert len(frames) == 1
+        assert frames[0].function_name == 'test_function_name'
+
+    def test_find_frames_2_frames_added(self):
+        from proflib.models.frame_list import FrameList
+
+        frame_list = FrameList()
+
+        frame_list.add_frame(PyFrameMock())
+        frame_list.add_frame(PyFrameMock())
+
+        frames = frame_list.find_frames('test_function_name')
+
+        assert len(frames) == 2
+        assert frames[0].function_name == 'test_function_name'
+
+    def test_find_frames_3_frames_added_1_not_matching(self):
+        from proflib.models.frame_list import FrameList
+
+        frame_list = FrameList()
+
+        frame_list.add_frame(PyFrameMock())
+        frame_list.add_frame(PyFrameMock())
+        frame_list.add_frame(PyFrameMock(function_name='test_method_name'))
+
+        frames = frame_list.find_frames('test_function_name')
+
+        assert len(frames) == 2
+        assert frames[0].function_name == 'test_function_name'

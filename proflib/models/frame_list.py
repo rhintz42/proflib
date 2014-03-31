@@ -1,5 +1,6 @@
-import sys
 import os
+import re
+import sys
 import time
 from proflib.models.frame import Frame
 
@@ -15,40 +16,8 @@ class FrameList(object):
     Encapsulates a function and contains all the local variables and such,
         formatted in the correct way for easy copy and paste into tests
     """
-
-    def __init__(self, *args, **kwargs):
-        """
-        The init function for the FrameList class
-        """
-        self._ordered_functions_list = []
-        self._frame_map = {}
-        self._root_frames = []
-
-    def add_frame(self, py_frame):
-        """
-        Adds a frame to this class, adding it to the:
-            * ordered_functions_list 
-            * frame_map
-        When adding to the frame_map, creates a new Frame object, encapsulating
-            the Python Frame Object
-        """
-        function_name = py_frame.f_code.co_name
-        key = get_function_key(function_name, self.num_frames)
-        self._append_to_ordered_functions_list(key)
-        self._frame_map[key] = Frame(py_frame, pos=self.num_frames)
-        
-    def _append_to_ordered_functions_list(self, function_key):
-        """
-        Adds the function_key to the ordered_functions_list
-        """
-        self._ordered_functions_list.append(function_key)
-
-    def find_frames(self, function_name):
-        """
-        Finds all the function frames that have the specified function_name
-        """
-        pass
-
+    #------------------------------ Public API --------------------------------
+    #//////////////////////////////Proterties//////////////////////////////////
     @property
     def frame_map(self):
         """
@@ -87,15 +56,6 @@ class FrameList(object):
         """
         return self._root_frames
 
-    def _append_to_root_frames(self, root_frame):
-        """
-        Appends to the _root_frames list
-
-        Returns self.root_frames
-        """
-        self._root_frames.append(root_frame)
-        return self.root_frames
-
     @property
     def reverse_order_functions_list(self):
         """
@@ -103,22 +63,19 @@ class FrameList(object):
         """
         return self.ordered_functions_list[::-1]
 
-    def _rec_build_hierarchy(self, reversed_order_list, root_frame, pos):
+    #////////////////////////////Public Methods////////////////////////////////
+    def add_frame(self, py_frame):
         """
-        The recursive wrapper for build_hierarchy
+        Adds a frame to this class, adding it to the:
+            * ordered_functions_list 
+            * frame_map
+        When adding to the frame_map, creates a new Frame object, encapsulating
+            the Python Frame Object
         """
-        while pos < self.num_frames:
-            current_frame = self.frame_map[reversed_order_list[pos]]
-            if current_frame.called_by_function_name != root_frame.function_name:
-                return pos-1
-
-            root_frame.prepend_child(current_frame)
-
-            pos = self._rec_build_hierarchy(reversed_order_list, current_frame, pos+1)
-
-            pos = pos + 1
-
-        return pos
+        function_name = py_frame.f_code.co_name
+        key = get_function_key(function_name, self.num_frames)
+        self._append_key_to_ordered_functions_list(key)
+        self._add_py_frame_to_frame_map(key, py_frame)
 
     def build_hierarchy(self):
         """
@@ -144,6 +101,18 @@ class FrameList(object):
         
         return self.root_frames
 
+    def find_frames(self, function_name):
+        """
+        Finds all the function frames that have the specified function_name
+        """
+        frames = []
+        p = re.compile(function_name + '\d+')
+        for function_key in self.ordered_functions_list:
+            if p.match(function_key):
+                frames.append(self.frame_map[function_key])
+
+        return frames
+    
     # TODO: THE CHILDREN LIST SHOULD BE AN OBJECT (MAYBE FRAME_LIST?)
     def to_json_output(self, depth=2):
         """
@@ -158,3 +127,53 @@ class FrameList(object):
             output_list.append(frame.to_dict(depth=depth))
 
         return output_list
+
+
+    #------------------------- Private Helper Functions -----------------------
+
+    def _add_py_frame_to_frame_map(self, key, py_frame):
+        """
+        Turns the py_frame into an encapsulated frame object, then adds the
+        frame to the frame_map
+        """
+        self._frame_map[key] = Frame(py_frame, pos=self.num_frames)
+        
+    def _append_key_to_ordered_functions_list(self, function_key):
+        """
+        Adds the function_key to the ordered_functions_list
+        """
+        self._ordered_functions_list.append(function_key)
+
+    def _append_to_root_frames(self, root_frame):
+        """
+        Appends to the _root_frames list
+
+        Returns self.root_frames
+        """
+        self._root_frames.append(root_frame)
+        return self.root_frames
+
+    def __init__(self, *args, **kwargs):
+        """
+        The init function for the FrameList class
+        """
+        self._ordered_functions_list = []
+        self._frame_map = {}
+        self._root_frames = []
+
+    def _rec_build_hierarchy(self, reversed_order_list, root_frame, pos):
+        """
+        The recursive wrapper for build_hierarchy
+        """
+        while pos < self.num_frames:
+            current_frame = self.frame_map[reversed_order_list[pos]]
+            if current_frame.called_by_function_name != root_frame.function_name:
+                return pos-1
+
+            root_frame.prepend_child(current_frame)
+
+            pos = self._rec_build_hierarchy(reversed_order_list, current_frame, pos+1)
+
+            pos = pos + 1
+
+        return pos

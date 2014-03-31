@@ -1,14 +1,8 @@
 NEXT STEPS
 ==========
-* Add more tests
-    * Should be testing every class in all files
-        * Frame                     - DONE
-        * FrameList                 - 
-    * For the decorator, create test methods that have the decorator applied 
-        to test what happend        - 
 * Address all of the comments that I've put
     * Like creating a class for the list of frames for the children, or just
-        making those lists into frame-lists
+        making those ```lists``` into ```frame-lists```
 * Have all variables in the models set by set functions
     * Frame                         - DONE
     * FrameList
@@ -17,7 +11,7 @@ NEXT STEPS
     * Make algorithms better
     * Make variable names more understandable
     * Add some docstrings
-    * Change "time" to "time_completed"
+    * Change ```time``` to ```time_completed```
 * Add Docs
     * Add docs that go over
         * How to install            - DONE
@@ -40,16 +34,22 @@ NEXT STEPS
     * Can do things recursively
 * Add formatting
 * Look into John's implementation for unit/integration testing
+* Add more tests
+    * For the decorator, create test methods that have the decorator applied 
+        to test what happend        - 
 
 
 
 
 DONE
 ====
-* Change persistent_locals to prof  - DONE
-    * Need to change everywhere that has persistent_locals to prof
+* Change ```persistent_locals``` to prof  - DONE
+    * Need to change everywhere that has ```persistent_locals``` to prof
 * Add Comments
-
+* Add more tests
+    * Should be testing every class in all files
+        * Frame                     - DONE
+        * FrameList                 - DONE
 
 
 
