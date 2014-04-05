@@ -15,7 +15,8 @@ from outlib.lib.wout import output_to_logger
 Lock = 0
 
 
-def prof(depth=2):
+def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
+            exclude_variables=None):
     def actual_decorator(func):
         """ 
         This decorator will check if my wrapper works.
@@ -66,7 +67,12 @@ def prof(depth=2):
             func.frame_list.build_hierarchy()
 
             # Print output to Logger
-            output_to_logger(func.frame_list.to_json_output(depth=depth))
+            output_to_logger(func.frame_list.to_json_output( \
+                depth=depth,
+                include_keys=include_keys,
+                include_variables=include_variables,
+                exclude_keys=exclude_keys,
+                exclude_variables=exclude_variables))
 
             # Reset Things
             func.frame_list = FrameList()

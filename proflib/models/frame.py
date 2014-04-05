@@ -185,8 +185,20 @@ class Frame(object):
         """
         if frame.function_name != self.wrapper_function_name:
             self.children.insert(0, frame)
+
+    def _get_local_variables_to_include(self, include_variables):
+        if not include_variables:
+            return self.local_variables
+
+        local_variables = {}
+        for key,value in self.local_variables.items():
+            if key in include_variables:
+                local_variables[key] = value
+
+        return local_variables
     
-    def to_dict(self, depth=2):
+    def to_dict(self, depth=2, include_keys=None, include_variables=None,
+                exclude_keys=None, exclude_variables=None):
         """
         Recursively print out all of the frames and their children, and return
             in a dict format for easier printing to console/file
@@ -196,12 +208,18 @@ class Frame(object):
         if depth <= 0:
             return None
         new_depth = depth - 1
+
+        local_variables = self._get_local_variables_to_include(include_variables)
+
         return {
             'called_by_function_name': self.called_by_function_name,
-            'children': [c.to_dict(depth=new_depth) for c in self.children],
+            'children': [c.to_dict( depth=new_depth, include_keys=include_keys, \
+                                    include_variables=include_variables, \
+                                    exclude_keys=exclude_keys, \
+                                    exclude_variables=exclude_variables) for c in self.children],
             'filename': self.filename,
             'function_name': self.function_name,
-            'local_variables': self.local_variables,
+            'local_variables': local_variables,
             'parent': self.parent,
             'pos_called_in': self.pos_called_in,
             'time': self.time,

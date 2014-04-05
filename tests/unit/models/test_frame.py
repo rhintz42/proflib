@@ -127,3 +127,30 @@ class TestFrame(unittest.TestCase):
         frame = Frame(FrameMock(), parent=parent_frame)
 
         assert frame.parent == parent_frame
+
+    def test_to_dict_simple(self):
+        from proflib.models.frame import Frame
+
+        frame = Frame(FrameMock())
+
+        response = frame.to_dict();
+
+        assert 'a' in response['local_variables']
+
+    def test_to_dict_include_variables__simple(self):
+        from proflib.models.frame import Frame
+
+        frame = Frame(FrameMock())
+
+        response = frame.to_dict(include_variables=['a']);
+
+        assert 'a' in response['local_variables']
+
+    def test_to_dict_include_variables__simple_2(self):
+        from proflib.models.frame import Frame
+
+        frame = Frame(FrameMock())
+
+        response = frame.to_dict(include_variables=['b']);
+
+        assert 'a' not in response['local_variables']

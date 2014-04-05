@@ -114,7 +114,9 @@ class FrameList(object):
         return frames
     
     # TODO: THE CHILDREN LIST SHOULD BE AN OBJECT (MAYBE FRAME_LIST?)
-    def to_json_output(self, depth=2):
+    def to_json_output( self, depth=2, include_keys=None,
+                        include_variables=None, exclude_keys=None,
+                        exclude_variables=None):
         """
         Return a list of Frames that have been converted to dicts for easy
             output
@@ -124,7 +126,11 @@ class FrameList(object):
 
         output_list = []
         for frame in self.root_frames:
-            output_list.append(frame.to_dict(depth=depth))
+            output_list.append(frame.to_dict(depth=depth,
+                                            include_keys=include_keys,
+                                            include_variables=include_variables,
+                                            exclude_keys=exclude_keys,
+                                            exclude_variables=exclude_variables))
 
         return output_list
 
