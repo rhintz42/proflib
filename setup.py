@@ -27,7 +27,7 @@ github_dependencies = [
 ]
 
 setup(name='proflib',
-      version='1.0.1',
+      version='1.0.2',
       description='proflib',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
@@ -43,8 +43,8 @@ setup(name='proflib',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      install_requires=requires,
       dependency_links=github_dependencies,
+      install_requires=requires,
       tests_require=requires,
       test_suite="proflib",
       entry_points="""\
