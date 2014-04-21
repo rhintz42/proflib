@@ -182,4 +182,3 @@ Last, add the kwarg 'dependency_links=github_dependcies,' to your setup method
           dependency_links=github_dependencies,
           ...,
           )
-
