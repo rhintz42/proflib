@@ -6,12 +6,14 @@ from proflib.models.frame import Frame
 
 @prof()
 def fo():
+    """ fo here """
     c = 30
     return c
 
 
 @prof(3)
 def foo():
+    """ foo here (A bit bigger than the others) """
     a = 10
     e = bar(True)
     c = fo()
@@ -33,7 +35,7 @@ def tt():
     return z
 
 
-@prof()
+#@prof()
 def bar(tr):
     b = 20
     if tr:

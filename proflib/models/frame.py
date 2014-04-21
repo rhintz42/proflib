@@ -2,6 +2,8 @@ import sys
 import os
 import time
 
+# TODO: Get the stack trace (traceback): http://stackoverflow.com/questions/1156023/print-current-call-stack-in-python
+
 class Frame(object):
     """
     Encapsulates the Python Frame Object and contains all the local variables
