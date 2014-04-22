@@ -9,6 +9,7 @@ class FrameCodeMock(object):
     def __init__(self, *args, **kwargs):
         self.co_name = kwargs['function_name'] if 'function_name' in kwargs else 'test_function_name'
         self.co_filename = 'test_filename'
+        self.co_firstlineno = 25
         
 
 class FrameMock(object):
@@ -24,6 +25,7 @@ class TestFrame(unittest.TestCase):
     
     def test_frame_init_simple(self):
         from proflib.models.frame import Frame
+        from proflib import views
 
         frame = Frame(FrameMock())
 

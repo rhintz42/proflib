@@ -1,6 +1,8 @@
 import sys
 import os
 import time
+from proflib.lib.docstrings import get_docstring_of_function, \
+                                   get_code_of_function
 
 # TODO: Get the stack trace (traceback): http://stackoverflow.com/questions/1156023/print-current-call-stack-in-python
 
@@ -37,7 +39,9 @@ class Frame(object):
         self.children = kwargs['children'] if 'children' in kwargs else []
         self.frame = frame
         self.function_name = frame.f_code.co_name
+        # Change filename to filepath
         self.filename = frame.f_code.co_filename
+        self.line_number = frame.f_code.co_firstlineno
         self.local_variables = frame.f_locals.copy()
         self.time = time.time()
         if frame.f_back.f_code.co_name == self.wrapper_function_name:
@@ -45,6 +49,12 @@ class Frame(object):
         else:
             self.called_by_function_name = frame.f_back.f_code.co_name
         self.pos_called_in = kwargs['pos'] if 'pos' in kwargs else 0
+
+        self.docstring = get_docstring_of_function( self.filename,
+                                                    self.function_name )
+        self.code = get_code_of_function( self.filename,
+                                          self.function_name,
+                                          self.line_number )
 
     """ GETTERS """
     @property
@@ -61,6 +71,7 @@ class Frame(object):
         """
         return self._children
 
+    # Change filename to filepath
     @property
     def filename(self):
         """
@@ -128,6 +139,7 @@ class Frame(object):
         """
         self._children = value
 
+    # Change filename to filepath
     @filename.setter
     def filename(self, value):
         """
@@ -219,8 +231,11 @@ class Frame(object):
                                     include_variables=include_variables, \
                                     exclude_keys=exclude_keys, \
                                     exclude_variables=exclude_variables) for c in self.children],
-            'filename': self.filename,
+            'code': self.code,
+            'docstring': self.docstring,
+            'filename': self.filename, # Change filename to filepath
             'function_name': self.function_name,
+            'line_number': self.line_number,
             'local_variables': local_variables,
             'parent': self.parent,
             'pos_called_in': self.pos_called_in,

@@ -36,7 +36,7 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
             if event=='return':
                 func.frame_list.add_frame(frame)
 
-        @wraps(func)
+        @wraps(func)    # TRACE WRAPPER
         def wrapped(*args, **kwargs):
             """
             This function does all the heavy-lifting of the function, setting

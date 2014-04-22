@@ -10,6 +10,7 @@ class FrameCodeMock(object):
     def __init__(self, *args, **kwargs):
         self.co_name = kwargs['function_name'] if 'function_name' in kwargs else 'test_function_name'
         self.co_filename = 'test_filename'
+        self.co_firstlineno = 25
         
 
 class PyFrameMock(object):

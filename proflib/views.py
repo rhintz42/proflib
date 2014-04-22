@@ -11,17 +11,6 @@ def fo():
     return c
 
 
-@prof(3)
-def foo():
-    """ foo here (A bit bigger than the others) """
-    a = 10
-    e = bar(True)
-    c = fo()
-    g = bar(False)
-    h = tt()
-    return a
-
-
 @prof(1)
 def ba(var):
     d = var
@@ -55,3 +44,14 @@ def my_view(request):
     b = bar(True)
     b = bar(False)
     return {'project': 'proflib'}
+
+
+@prof(3)
+def foo():
+    """ foo here (A bit bigger than the others) """
+    a = 10
+    e = bar(True)
+    c = fo()
+    g = bar(False)
+    h = tt()
+    return a
