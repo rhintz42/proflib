@@ -23,7 +23,7 @@ class FunctionDetails(object):
         self.file_path = py_frame.f_code.co_filename
         self.line_number = py_frame.f_code.co_firstlineno
         self.func_code = FuncCode(self)
-        #self.func_docstring = FuncDocstring(self)
+        self.func_docstring = FuncDocstring(self)
     
     """ GETTERS """
     @property

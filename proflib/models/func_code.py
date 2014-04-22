@@ -11,14 +11,10 @@ class FuncCode(object):
 
     def __init__(self, function_details):
         self.function_details = function_details
-        #try:
         self.code = get_code_of_function( function_details.file_path,
                                           function_details.function_name,
                                           function_details.line_number )
-        #print("self.code: ")
-        #print(self.code)
-        #except ValueError:
-        #    self.code = []
+
 
     """ GETTERS """
     @property

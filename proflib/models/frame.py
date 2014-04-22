@@ -291,7 +291,7 @@ class Frame(object):
                                     exclude_keys=exclude_keys, \
                                     exclude_variables=exclude_variables) for c in self.children],
             'code': self.code,
-            #'docstring': self.docstring,
+            'docstring': self.docstring,
             'file_path': self.file_path,
             'function_name': self.function_name,
             'line_number': self.line_number,

@@ -7,7 +7,7 @@ import inspect
 def get_mod_from_file(filepath):
     class_inst = None
 
-    if 'lib/python2.7/site-packages' in filepath:
+    if 'lib/python2.7' in filepath:
         return None
 
     mod_name,file_ext = os.path.splitext(os.path.split(filepath)[-1])
@@ -16,15 +16,14 @@ def get_mod_from_file(filepath):
         if file_ext.lower() == '.py':
             py_mod = imp.load_source(mod_name, filepath)
             return py_mod
+        elif file_ext.lower() == '.pyc':
+            py_mod = imp.load_compiled(mod_name, filepath)
+            return py_mod
     except ValueError as e:
-        print(filepath)
+        print('filepath: ' + filepath)
         print(e)
         return None
-    """
-        elif file_ext.lower() == '.pyc':
-            return imp.load_compiled(mod_name, filepath)
 
-    """
     return None
 
 def get_docstring_of_function(filepath, function_name):
@@ -35,7 +34,7 @@ def get_docstring_of_function(filepath, function_name):
         docstring = func.__doc__
         if docstring:
             return docstring 
-    
+
     return ""
 
 def is_trace_wrapper_function(source_lines):
