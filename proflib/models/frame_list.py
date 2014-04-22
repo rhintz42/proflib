@@ -13,8 +13,9 @@ def get_function_key(function_name, num_frames):
 
 class FrameList(object):
     """
-    Encapsulates a function and contains all the local variables and such,
-        formatted in the correct way for easy copy and paste into tests
+    Encapsulates a list of frames that contains all the local variables and
+        such. Has a function for formatting a list of frames in the correct
+        way for easy copy and paste into tests
     """
     #------------------------------ Public API --------------------------------
     #//////////////////////////////Proterties//////////////////////////////////
@@ -113,7 +114,6 @@ class FrameList(object):
 
         return frames
     
-    # TODO: THE CHILDREN LIST SHOULD BE AN OBJECT (MAYBE FRAME_LIST?)
     def to_json_output( self, depth=2, include_keys=None,
                         include_variables=None, exclude_keys=None,
                         exclude_variables=None):

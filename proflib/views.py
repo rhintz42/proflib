@@ -2,6 +2,8 @@ from pyramid.view import view_config
 from proflib.lib.decorators import prof
 from proflib.models.frame_list import FrameList
 from proflib.models.frame import Frame
+from .views2 import hello
+#from proflib.views2 import hello
 
 
 @prof()

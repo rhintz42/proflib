@@ -4,10 +4,14 @@ import time
 import traceback
 from proflib.lib.docstrings import get_docstring_of_function, \
                                    get_code_of_function
+from proflib.lib.py_frame import get_py_frame_locals, \
+                                 get_py_frame_called_by_function
+from proflib.models.function_details import FunctionDetails
+from proflib.models.frame_stack_trace import FrameStackTrace
 
 # TODO: py_ represents all of the objectss saved that are lower-level python
 #   objects
-#   * Example: python's frame object, should be called py_frame
+#   * Example: python's frame object is called py_frame
 
 class Frame(object):
     """
@@ -23,50 +27,46 @@ class Frame(object):
 
     # TODO: Change the kwargs to variables of the map that I actually want to
     #   allow
-    def __init__(self, frame, **kwargs):
+    def __init__(self, py_frame, children=None, parent=None, pos=0):
         """
         Init method for the Frame class
         """
-        self._init_with_frame(frame, **kwargs)
+        self._init_with_py_frame(py_frame, children=children, parent=parent,
+                                    pos=pos)
 
     # TODO: Add setters for each variable
     # TODO: Change the **kwargs to have the specific key-word arguments that
     #   this method takes
-    # TODO: Change frame to py_frame where appropriate
-    def _init_with_frame(self, frame, **kwargs):
+    def _init_with_py_frame(self, py_frame, children=None, parent=None,
+                                pos=0):
         """
         Initializes the frame object with the Python Frame Object provided.
         """
         self.wrapper_function_name = 'wrapped'
 
-        self.parent = kwargs['parent'] if 'parent' in kwargs else None
-        self.children = kwargs['children'] if 'children' in kwargs else []
+        self.parent = parent #kwargs['parent'] if 'parent' in kwargs else None
+        self.children = children or [] #kwargs['children'] if 'children' in kwargs else []
         # Change frame to py_frame
-        self.frame = frame
-        self.function_name = frame.f_code.co_name
-        # Change filename to filepath
-        self.filename = frame.f_code.co_filename
-        self.line_number = frame.f_code.co_firstlineno
-        self.local_variables = frame.f_locals.copy()
+        self.py_frame = py_frame
         self.time = time.time()
+        self.local_variables = get_py_frame_locals(py_frame)
+        self.frame_stack_trace = FrameStackTrace(self)
+
+        self.called_by_function_name = get_py_frame_called_by_function(
+            py_frame,
+            self.wrapper_function_name)
+        '''
         # This should be put into another function
-        if frame.f_back.f_code.co_name == self.wrapper_function_name:
-            self.called_by_function_name = frame.f_back.f_back.f_code.co_name
+        if py_frame.f_back.f_code.co_name == self.wrapper_function_name:
+            self.called_by_function_name = py_frame.f_back.f_back.f_code.co_name
         else:
-            self.called_by_function_name = frame.f_back.f_code.co_name
-        self.pos_called_in = kwargs['pos'] if 'pos' in kwargs else 0
-        
-        # Get non-frame variables
-        self.docstring = get_docstring_of_function( self.filename,
-                                                    self.function_name )
-        self.code = get_code_of_function( self.filename,
-                                          self.function_name,
-                                          self.line_number )
-        # TODO: Refactor the `traceback.format_stack` into another class and
-        #   call from there
-        #   * The class will parse it more to remove the decorator and below
-        #     from the list
-        self.stack_trace = traceback.format_stack()
+            self.called_by_function_name = py_frame.f_back.f_code.co_name
+        '''
+
+        self.pos_called_in = pos #kwargs['pos'] if 'pos' in kwargs else 0
+
+        self.function_details = FunctionDetails(py_frame)
+
 
     """ GETTERS """
     @property
@@ -83,27 +83,68 @@ class Frame(object):
         """
         return self._children
 
-    # Change filename to filepath
     @property
-    def filename(self):
+    def code(self):
         """
-        Returns the filename that this function resides in
+        Return the code for the function of this frame
         """
-        return self._filename
+        return self.function_details.code
 
     @property
-    def frame(self):
+    def docstring(self):
+        """
+        Return the docstring for the function of this frame
+        """
+        return self.function_details.docstring
+
+    @property
+    def file_path(self):
+        """
+        Return the file_path that this function resides in
+        """
+        return self.function_details.file_path
+
+    @property
+    def file_name(self):
+        """
+        Return the file_path that this function resides in
+        """
+        return self.function_details.file_name
+
+    @property
+    def py_frame(self):
         """
         Returns the Python Frame Object associated with this Frame
         """
-        return self._frame
+        return self._py_frame
+
+    @property
+    def frame_stack_trace(self):
+        """
+        Returns the Python Frame Object associated with this Frame
+        """
+        return self._frame_stack_trace
+
+    @property
+    def function_details(self):
+        """
+        Return the line number of where the function is in a file
+        """
+        return self._function_details
 
     @property
     def function_name(self):
         """
-        Returns the function name of this frame/function
+        Return the function name of the function in this frame
         """
-        return self._function_name
+        return self.function_details.function_name
+
+    @property
+    def line_number(self):
+        """
+        Return the line number of where the function is in a file
+        """
+        return self.function_details.line_number
 
     @property
     def local_variables(self):
@@ -130,6 +171,13 @@ class Frame(object):
         return self._pos_called_in
 
     @property
+    def stack_trace(self):
+        """
+        Returns the Python Frame Object associated with this Frame
+        """
+        return self.frame_stack_trace.stack_trace
+
+    @property
     def time(self):
         """
         Returns the time that this frame/function returned
@@ -151,27 +199,26 @@ class Frame(object):
         """
         self._children = value
 
-    # Change filename to filepath
-    @filename.setter
-    def filename(self, value):
+    @py_frame.setter
+    def py_frame(self, value):
         """
-        Sets the value for self.filename
+        Sets the value for self.py_frame
         """
-        self._filename = value
+        self._py_frame = value
 
-    @frame.setter
-    def frame(self, value):
+    @frame_stack_trace.setter
+    def frame_stack_trace(self, value):
         """
-        Sets the value for self.frame
+        Sets the value for self.frame_stack_trace
         """
-        self._frame = value
+        self._frame_stack_trace = value
 
-    @function_name.setter
-    def function_name(self, value):
+    @function_details.setter
+    def function_details(self, value):
         """
-        Sets the value for self.function_name
+        Sets the value for self.function_details
         """
-        self._function_name = value
+        self._function_details = value
 
     @local_variables.setter
     def local_variables(self, value):
@@ -244,8 +291,8 @@ class Frame(object):
                                     exclude_keys=exclude_keys, \
                                     exclude_variables=exclude_variables) for c in self.children],
             'code': self.code,
-            'docstring': self.docstring,
-            'filename': self.filename, # Change filename to filepath
+            #'docstring': self.docstring,
+            'file_path': self.file_path,
             'function_name': self.function_name,
             'line_number': self.line_number,
             'local_variables': local_variables,

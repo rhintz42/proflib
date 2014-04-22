@@ -7,8 +7,8 @@ import sys
 
 class FrameCodeMock(object):
     def __init__(self, *args, **kwargs):
-        self.co_name = kwargs['function_name'] if 'function_name' in kwargs else 'test_function_name'
-        self.co_filename = 'test_filename'
+        self.co_name = kwargs['function_name'] if 'function_name' in kwargs else 'foo'
+        self.co_filename = '/opt/webapp/proflib/src/proflib/proflib/views.py'
         self.co_firstlineno = 25
         
 
@@ -32,13 +32,19 @@ class TestFrame(unittest.TestCase):
         assert frame
 
     
-    def test_frame_filename(self):
+    def test_frame_file_path(self):
         from proflib.models.frame import Frame
 
         frame = Frame(FrameMock())
 
-        assert frame.filename == 'test_filename'
+        assert frame.file_path == '/opt/webapp/proflib/src/proflib/proflib/views.py'
+    
+    def test_frame_file_name(self):
+        from proflib.models.frame import Frame
 
+        frame = Frame(FrameMock())
+
+        assert frame.file_name == 'views.py'
     
     def test_frame_local_variables(self):
         from proflib.models.frame import Frame
@@ -53,14 +59,14 @@ class TestFrame(unittest.TestCase):
 
         frame = Frame(FrameMock())
 
-        assert frame.called_by_function_name == 'test_function_name'
+        assert frame.called_by_function_name == 'foo'
 
     
     def test_frame_called_by_function_name_robust(self):
         from proflib.models.frame import Frame
 
         parent_frame = Frame(FrameMock(function_name='parent'))
-        frame = Frame(FrameMock(f_back=parent_frame.frame))
+        frame = Frame(FrameMock(f_back=parent_frame.py_frame))
 
         assert frame.called_by_function_name == 'parent'
 
@@ -71,7 +77,7 @@ class TestFrame(unittest.TestCase):
 
         frame = Frame(py_frame)
 
-        assert frame.frame.f_locals['a'] == py_frame.f_locals['a']
+        assert frame.py_frame.f_locals['a'] == py_frame.f_locals['a']
 
     def test_frame_back_wrapper(self):
         from proflib.models.frame import Frame
@@ -87,9 +93,9 @@ class TestFrame(unittest.TestCase):
         from proflib.models.frame import Frame
 
         grandparent_frame = Frame(FrameMock(function_name='grandparent'))
-        wrapper_frame = Frame(FrameMock(function_name='wrapped', f_back=grandparent_frame.frame))
+        wrapper_frame = Frame(FrameMock(function_name='wrapped', f_back=grandparent_frame.py_frame))
         
-        frame = Frame(FrameMock(f_back=wrapper_frame.frame))
+        frame = Frame(FrameMock(f_back=wrapper_frame.py_frame))
         
         assert frame.called_by_function_name == 'grandparent'
     
