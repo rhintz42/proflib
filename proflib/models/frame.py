@@ -1,10 +1,13 @@
 import sys
 import os
 import time
+import traceback
 from proflib.lib.docstrings import get_docstring_of_function, \
                                    get_code_of_function
 
-# TODO: Get the stack trace (traceback): http://stackoverflow.com/questions/1156023/print-current-call-stack-in-python
+# TODO: py_ represents all of the objectss saved that are lower-level python
+#   objects
+#   * Example: python's frame object, should be called py_frame
 
 class Frame(object):
     """
@@ -29,6 +32,7 @@ class Frame(object):
     # TODO: Add setters for each variable
     # TODO: Change the **kwargs to have the specific key-word arguments that
     #   this method takes
+    # TODO: Change frame to py_frame where appropriate
     def _init_with_frame(self, frame, **kwargs):
         """
         Initializes the frame object with the Python Frame Object provided.
@@ -37,6 +41,7 @@ class Frame(object):
 
         self.parent = kwargs['parent'] if 'parent' in kwargs else None
         self.children = kwargs['children'] if 'children' in kwargs else []
+        # Change frame to py_frame
         self.frame = frame
         self.function_name = frame.f_code.co_name
         # Change filename to filepath
@@ -44,17 +49,24 @@ class Frame(object):
         self.line_number = frame.f_code.co_firstlineno
         self.local_variables = frame.f_locals.copy()
         self.time = time.time()
+        # This should be put into another function
         if frame.f_back.f_code.co_name == self.wrapper_function_name:
             self.called_by_function_name = frame.f_back.f_back.f_code.co_name
         else:
             self.called_by_function_name = frame.f_back.f_code.co_name
         self.pos_called_in = kwargs['pos'] if 'pos' in kwargs else 0
-
+        
+        # Get non-frame variables
         self.docstring = get_docstring_of_function( self.filename,
                                                     self.function_name )
         self.code = get_code_of_function( self.filename,
                                           self.function_name,
                                           self.line_number )
+        # TODO: Refactor the `traceback.format_stack` into another class and
+        #   call from there
+        #   * The class will parse it more to remove the decorator and below
+        #     from the list
+        self.stack_trace = traceback.format_stack()
 
     """ GETTERS """
     @property
@@ -239,5 +251,6 @@ class Frame(object):
             'local_variables': local_variables,
             'parent': self.parent,
             'pos_called_in': self.pos_called_in,
+            'stack_trace': self.stack_trace,
             'time': self.time,
         }

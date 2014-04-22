@@ -1,9 +1,9 @@
-# This code taken from:
-#   http://stackoverflow.com/questions/301134/dynamic-module-import-in-python
 import imp
 import os
 import inspect
 
+# This code taken from:
+#   http://stackoverflow.com/questions/301134/dynamic-module-import-in-python
 def get_mod_from_file(filepath):
     class_inst = None
     expected_class = 'MyClass'
@@ -34,9 +34,15 @@ def is_trace_wrapper_function(source_lines):
         return True
     return False
 
+def get_func_from_mod(mod, function_name):
+    if hasattr(py_mod, function_name):
+        return getattr(py_mod, function_name)
+
+# TODO: Remove docstring from function
 def get_code_of_function(filepath, function_name, line_number):
     py_mod = get_mod_from_file(filepath)
 
+    # replace with `get_func_from_mod`
     if hasattr(py_mod, function_name):
         func = getattr(py_mod, function_name)
         filename = inspect.getfile(func)
