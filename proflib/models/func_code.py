@@ -2,7 +2,7 @@ import sys
 import os
 import time
 import traceback
-from proflib.lib.filelib import get_function_code
+from proflib.lib.func_code import get_function_code
 
 class FuncCode(object):
     """

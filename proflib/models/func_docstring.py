@@ -2,7 +2,7 @@ import sys
 import os
 import time
 import traceback
-from proflib.lib.filelib import get_function_docstring
+from proflib.lib.func_docstring import get_function_docstring
 
 class FuncDocstring(object):
     """
