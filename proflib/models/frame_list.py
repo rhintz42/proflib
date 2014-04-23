@@ -3,13 +3,7 @@ import re
 import sys
 import time
 from proflib.models.frame import Frame
-
-#TODO: Add this to a lib instead of having it here
-def get_function_key(function_name, num_frames):
-    """
-    Returns the function_key
-    """
-    return function_name + str(num_frames)
+from proflib.lib.frame_map import get_function_key
 
 class FrameList(object):
     """
@@ -83,22 +77,28 @@ class FrameList(object):
         Build a hierarchy of Frames to Frames
 
         Returns the root_frame
+
+        This solution is part iteritive to get all possible root frames, which
+            happens when the function that you have the prof decorator on gets
+            called multiple times, or when you have the prof decorator on
+            multiple functions
         """
         function_map = {}
 
         reversed_order_list = self.reverse_order_functions_list
         if len(reversed_order_list) == 0:
             return
+
         root_key = reversed_order_list[0]
         root_frame = self.frame_map[root_key]
         self._root_frames.append(root_frame)
         pos = 0
+
         while pos < self.num_frames:
             pos = self._rec_build_hierarchy(reversed_order_list, root_frame, pos+1) + 1
             if pos < self.num_frames:
                 root_frame = self.frame_map[reversed_order_list[pos]]
                 self._append_to_root_frames(root_frame)
-
         
         return self.root_frames
 

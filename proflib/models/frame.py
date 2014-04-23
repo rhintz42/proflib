@@ -2,7 +2,7 @@ import sys
 import os
 import time
 import traceback
-from proflib.lib.docstrings import get_docstring_of_function, \
+from proflib.lib.filelib import get_docstring_of_function, \
                                    get_code_of_function
 from proflib.lib.py_frame import get_py_frame_locals, \
                                  get_py_frame_called_by_function
@@ -25,8 +25,6 @@ class Frame(object):
     #   * Maybe add something between children functions
     #   * Should probably be in the format library
 
-    # TODO: Change the kwargs to variables of the map that I actually want to
-    #   allow
     def __init__(self, py_frame, children=None, parent=None, pos=0):
         """
         Init method for the Frame class
@@ -34,9 +32,6 @@ class Frame(object):
         self._init_with_py_frame(py_frame, children=children, parent=parent,
                                     pos=pos)
 
-    # TODO: Add setters for each variable
-    # TODO: Change the **kwargs to have the specific key-word arguments that
-    #   this method takes
     def _init_with_py_frame(self, py_frame, children=None, parent=None,
                                 pos=0):
         """
@@ -44,9 +39,8 @@ class Frame(object):
         """
         self.wrapper_function_name = 'wrapped'
 
-        self.parent = parent #kwargs['parent'] if 'parent' in kwargs else None
-        self.children = children or [] #kwargs['children'] if 'children' in kwargs else []
-        # Change frame to py_frame
+        self.parent = parent
+        self.children = children or []
         self.py_frame = py_frame
         self.time = time.time()
         self.local_variables = get_py_frame_locals(py_frame)
@@ -55,15 +49,8 @@ class Frame(object):
         self.called_by_function_name = get_py_frame_called_by_function(
             py_frame,
             self.wrapper_function_name)
-        '''
-        # This should be put into another function
-        if py_frame.f_back.f_code.co_name == self.wrapper_function_name:
-            self.called_by_function_name = py_frame.f_back.f_back.f_code.co_name
-        else:
-            self.called_by_function_name = py_frame.f_back.f_code.co_name
-        '''
 
-        self.pos_called_in = pos #kwargs['pos'] if 'pos' in kwargs else 0
+        self.pos_called_in = pos 
 
         self.function_details = FunctionDetails(py_frame)
 
@@ -184,6 +171,14 @@ class Frame(object):
         """
         return self._time
 
+    # TODO: should probably rename to tracer_wrapper_function_name
+    @property
+    def wrapper_function_name(self):
+        """
+        Returns the time that this frame/function returned
+        """
+        return self._wrapper_function_name
+
     """ SETTERS """
     @called_by_function_name.setter
     def called_by_function_name(self, value):
@@ -248,9 +243,13 @@ class Frame(object):
         """
         self._time = value
 
-    # TODO: WHAT ARE THE FRAME OBJECTS WE ARE INSERTING?
-    #   They are this class objects, but we should specify the difference
-    #       between this class and regular python frames
+    @wrapper_function_name.setter
+    def wrapper_function_name(self, value):
+        """
+        Sets the value for self.wrapper_function_name
+        """
+        self._wrapper_function_name = value
+
     def prepend_child(self, frame):
         """
         Add a frame to the beginning of the children list if the function is
