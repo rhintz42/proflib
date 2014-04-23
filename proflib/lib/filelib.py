@@ -34,8 +34,9 @@ def get_file_lines(filepath):
         with open(filepath) as f:
             file_lines = f.readlines()
     except IOError as e:
-        print('IOError in get_function_docstring: ')
-        print(e)
+        #print('IOError - File does not exist')
+        #print('Filepath: ' + filepath)
+        #print(e)
         return []
     
     return file_lines
@@ -111,8 +112,12 @@ def get_func_from_mod(mod, function_name):
         return getattr(py_mod, function_name)
 
 def _find_function_end_line_number(file_lines, function_def_line_num):
+    # Get indent
+    function_def_indent = len(file_lines[function_def_line_num-1]) - len(file_lines[function_def_line_num-1].lstrip())
+
     for i in xrange(function_def_line_num + 1, len(file_lines)):
-        if "def" in file_lines[i] or "@" in file_lines[i]:
+        current_line_indent = len(file_lines[i]) - len(file_lines[i].lstrip())
+        if '\n' != file_lines[i] and current_line_indent <= function_def_indent:
             return i
     return len(file_lines)
 
@@ -124,6 +129,11 @@ def get_function_code(filepath, function_name):
 
     function_def_line_num = _find_function_definition_line_number(file_lines,
                                                                   function_name)
+    
+    if function_def_line_num < 0:
+        # print('FUNCTION NOT FOUND: ' + function_name)
+        # print('FILEPATH: ' + filepath)
+        return []
 
     function_line_num = _find_function_line_number(file_lines,
                                                    function_def_line_num)
@@ -151,8 +161,10 @@ def _get_docstring_end_index(func_code_lines, docstring_start_index):
     
     for i,l in enumerate(func_code_lines[docstring_start_index+1:],
                          start=docstring_start_index+1):
-        if '"""' in func_code_lines[i]:
+        if '"""' in l:
             return i
+
+    return -1
 
 def _has_docstring(func_code_lines, function_name):
     """ Returns True if func_code_lines has a docstring, false otherwise """
@@ -172,11 +184,18 @@ def get_function_docstring(filepath, function_name):
     
     if not _has_docstring(func_code_lines, function_name):
         return []
-    
+
     docstring_start_index = _get_docstring_start_index(func_code_lines, function_name)
 
     # get ending_docstring_index
     docstring_end_index = _get_docstring_end_index(func_code_lines,
                                                    docstring_start_index)
+
+    if docstring_end_index < 0:
+        print("ERROR IN get_function_docstring!!!")
+        print(func_code_lines)
+        print(docstring_start_index)
+        print("!!!")
+        return []
 
     return func_code_lines[docstring_start_index:docstring_end_index+1]

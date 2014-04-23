@@ -69,3 +69,51 @@ def longer_docstring():
     """
     x = 84
     return x
+
+def add_headers(self, request, **kwargs):
+    """Add any headers needed by the connection. As of v2.0 this does
+    nothing by default, but is left for overriding by users that subclass
+    the :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+    This should not be called from user code, and is only exposed for use
+    when subclassing the
+    :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
+
+    :param request: The :class:`PreparedRequest <PreparedRequest>` to add headers to.
+    :param kwargs: The keyword arguments from the call to send().
+    """
+    pass
+
+def get(self, block=True, timeout=None):
+    """Return the stored value or raise the exception.
+
+    If this instance already holds a value / an exception, return / raise it immediatelly.
+    Otherwise, block until another greenlet calls :meth:`set` or :meth:`set_exception` or
+    until the optional timeout occurs.
+
+    When the *timeout* argument is present and not ``None``, it should be a
+    floating point number specifying a timeout for the operation in seconds
+    (or fractions thereof).
+    """
+    if self._exception is not _NONE:
+        if self._exception is None:
+            return self.value
+        raise self._exception
+    elif block:
+        switch = getcurrent().switch
+        self.rawlink(switch)
+        try:
+            timer = Timeout.start_new(timeout)
+            try:
+                result = self.hub.switch()
+                assert result is self, 'Invalid switch into AsyncResult.get(): %r' % (result, )
+            finally:
+                timer.cancel()
+        except:
+            self.unlink(switch)
+            raise
+        if self._exception is None:
+            return self.value
+        raise self._exception
+    else:
+        raise Timeout

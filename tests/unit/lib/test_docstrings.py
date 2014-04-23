@@ -46,6 +46,15 @@ class TestDocStrings(unittest.TestCase):
 
         assert 'def fo' in code[0]
 
+    def test_get_function_code__add_headers(self):
+        from proflib.lib.filelib import get_function_code
+
+        code = get_function_code('/opt/webapp/proflib/src/proflib/proflib/views.py',
+                                 'add_headers')
+
+        assert len(code)
+        assert code[0] == 'def add_headers(self, request, **kwargs):\n'
+
     def test_get_function_docstring__foo(self):
         from proflib.lib.filelib import get_function_docstring
 
@@ -78,6 +87,17 @@ class TestDocStrings(unittest.TestCase):
 
         assert len(docstring) == 5
         assert docstring[3] == "    '''Pretty cool'''\n"
+
+    
+    def test_get_function_docstring__add_headers(self):
+        from proflib.lib.filelib import get_function_docstring
+
+        docstring = get_function_docstring('/opt/webapp/proflib/src/proflib/proflib/views.py',
+                                           'add_headers')
+
+        assert len(docstring) == 11
+        assert docstring[0] == '    """Add any headers needed by the connection. As of v2.0 this does\n'
+    
 
     def test_get_function_docstring__my_view(self):
         from proflib.lib.filelib import get_function_docstring
