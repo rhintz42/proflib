@@ -2,8 +2,6 @@ import sys
 import os
 import time
 import traceback
-from proflib.lib.filelib import get_docstring_of_function, \
-                                   get_code_of_function
 from proflib.lib.py_frame import get_py_frame_locals, \
                                  get_py_frame_called_by_function
 from proflib.models.function_details import FunctionDetails

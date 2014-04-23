@@ -2,7 +2,7 @@ import sys
 import os
 import time
 import traceback
-from proflib.lib.filelib import get_code_of_function
+from proflib.lib.filelib import get_function_code
 
 class FuncCode(object):
     """
@@ -11,9 +11,8 @@ class FuncCode(object):
 
     def __init__(self, function_details):
         self.function_details = function_details
-        self.code = get_code_of_function( function_details.file_path,
-                                          function_details.function_name,
-                                          function_details.line_number )
+        self.code = get_function_code( function_details.file_path,
+                                       function_details.function_name )
 
 
     """ GETTERS """

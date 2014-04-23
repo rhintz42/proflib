@@ -2,7 +2,7 @@ import sys
 import os
 import time
 import traceback
-from proflib.lib.filelib import get_docstring_of_function
+from proflib.lib.filelib import get_function_docstring
 
 class FuncDocstring(object):
     """
@@ -11,8 +11,8 @@ class FuncDocstring(object):
 
     def __init__(self, function_details):
         self.function_details = function_details
-        self.docstring = get_docstring_of_function( function_details.file_path,
-                                                    function_details.function_name )
+        self.docstring = get_function_docstring( function_details.file_path,
+                                                 function_details.function_name )
 
     """ GETTERS """
     @property

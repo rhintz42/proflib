@@ -2,7 +2,6 @@ import sys
 import os
 import time
 import traceback
-from proflib.lib.filelib import get_code_of_function
 
 class FrameStackTrace(object):
     """

@@ -2,8 +2,6 @@ import sys
 import os
 import time
 import traceback
-from proflib.lib.filelib import get_docstring_of_function, \
-                                   get_code_of_function
 from proflib.models.func_code import FuncCode
 from proflib.models.func_docstring import FuncDocstring
 

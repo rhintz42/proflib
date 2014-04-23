@@ -6,7 +6,6 @@ from proflib.models.frame import Frame
 from proflib.views2 import hello
 
 
-@prof()
 def fo():
     """ fo here """
     c = 30
@@ -26,6 +25,7 @@ def tt():
     return z
 
 
+#@test()
 #@prof()
 def bar(tr):
     b = 20
@@ -56,4 +56,16 @@ def foo():
     c = fo()
     g = bar(False)
     h = tt()
+    x = longer_docstring()
     return a
+
+#@otherprof
+@prof(2)
+def longer_docstring():
+    """
+    This is the docstring for the function longer_docstring
+    It is called by foo
+    '''Pretty cool'''
+    """
+    x = 84
+    return x

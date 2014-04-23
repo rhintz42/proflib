@@ -26,16 +26,80 @@ def get_mod_from_file(filepath):
 
     return None
 
-def get_docstring_of_function(filepath, function_name):
-    py_mod = get_mod_from_file(filepath)
+def get_file_lines(filepath):
+    """
+    Return all the lines of a file and return them as an array
+    """
+    try:
+        with open(filepath) as f:
+            file_lines = f.readlines()
+    except IOError as e:
+        print('IOError in get_function_docstring: ')
+        print(e)
+        return []
+    
+    return file_lines
 
-    if hasattr(py_mod, function_name):
-        func = getattr(py_mod, function_name)
-        docstring = func.__doc__
-        if docstring:
-            return docstring 
+def get_function_definition(function_name):
+    """
+    Return start of string representation of function with the given function
+        name
+    """
+    return 'def %s' %(function_name)
 
-    return ""
+def find_function_line_number(filepath, function_name=None,
+                              function_def_line_num=None):
+    """
+    Return line number of start of the function
+
+    Return -1 if function not in file
+
+    This includes the decorators of the function
+    """
+    file_lines = get_file_lines(filepath)
+
+    if not function_def_line_num and function_name:
+        function_def_line_num = _find_function_definition_line_number(file_lines,
+                                                                      function_name)
+    
+    return _find_function_line_number(file_lines,
+                                      function_def_line_num=function_def_line_num)
+
+
+def _find_function_definition_line_number(file_lines, function_name):
+    """
+    Return the line number where the function is defined in the file
+
+    Return -1 if the function_name not found in the file
+    """
+    function_definition = get_function_definition(function_name)
+
+    for i,l in enumerate(file_lines):
+        if function_definition in l:
+            return i + 1
+
+    return -1
+
+def _find_function_line_number(file_lines,
+                               function_def_line_num):
+    """
+    Return the line number of the highest decorator of the function
+
+    Return the line_number of the function definition if no decorators on
+        function
+    """
+    i = function_def_line_num - 1
+    while(i >= 0):
+        if '@' not in file_lines[i] and 'def' not in file_lines[i]:
+            return i + 2 # +1 to accomodate the 0 index of file_lines and +1
+                         #  because the previous line had the last
+                         #  decorator/function definition
+        i -= 1
+
+    if i == 0:
+        return 0
+
+    return function_def_line_num
 
 def is_trace_wrapper_function(source_lines):
     if source_lines[0][0] == '        @wraps(func)    # TRACE WRAPPER\n':
@@ -46,60 +110,73 @@ def get_func_from_mod(mod, function_name):
     if hasattr(py_mod, function_name):
         return getattr(py_mod, function_name)
 
-# TODO: Remove docstring from function
-def get_code_of_function(filepath, function_name, line_number):
-    #py_mod = get_mod_from_file(filepath)
-
-    '''
-    # replace with `get_func_from_mod`
-    if hasattr(py_mod, function_name):
-        func = getattr(py_mod, function_name)
-        #file_path = inspect.getfile(func)
-        #mod = inspect.getmodule(func)
-        try:
-            lines = inspect.getsourcelines(func)
-        except:
-            return []
-        #first_line_code = lines[0][0]
-        if not is_trace_wrapper_function(lines):
-            return lines
-
-    '''
-    return _get_code_of_trace_wrapped_function(filepath, function_name, line_number)
-
-    return []
-
-def _get_code_of_trace_wrapped_function(filepath, function_name, line_number):
-    #py_mod = get_mod_from_file(filepath)
-
-    #if hasattr(py_mod, function_name):
-    #    func = getattr(py_mod, function_name)
-    
-    try:
-        with open(filepath) as f:
-            file_lines = f.readlines()
-    except IOError as e:
-        print('IOError in get_code_of_trace_wrapped_function: ')
-        print(e)
-        return []
-
-    index_start_func = line_number - 1;
-
-    # Have the line line number to start with 1 after the wrappers
-    for i in xrange(index_start_func, len(file_lines)):
-        if "def" in file_lines[i]:
-            function_def_start = i
-            break
-
-    for i in xrange(function_def_start + 1, len(file_lines)):
+def _find_function_end_line_number(file_lines, function_def_line_num):
+    for i in xrange(function_def_line_num + 1, len(file_lines)):
         if "def" in file_lines[i] or "@" in file_lines[i]:
-            index_end_func = i
-            break
+            return i
+    return len(file_lines)
 
-    if 'index_end_func' not in locals():
-        index_end_func = len(file_lines)
+def _get_function_lines(lines, function_line_num, function_end_line_num):
+    return lines[function_line_num-1:function_end_line_num]
 
-    func_list = file_lines[index_start_func:index_end_func]
+def get_function_code(filepath, function_name):
+    file_lines = get_file_lines(filepath)
 
-    return func_list
+    function_def_line_num = _find_function_definition_line_number(file_lines,
+                                                                  function_name)
 
+    function_line_num = _find_function_line_number(file_lines,
+                                                   function_def_line_num)
+
+    function_end_line_num = _find_function_end_line_number(file_lines,
+                                                           function_def_line_num)
+
+    func_code_lines = _get_function_lines(file_lines, function_line_num, function_end_line_num)
+
+    return func_code_lines
+
+def _get_docstring_start_index(func_code_lines, function_name):
+    """ Get Start of Docstring line # """
+    function_definition = get_function_definition(function_name)
+
+    for i,l in enumerate(func_code_lines):
+        if(function_definition in l):
+            return i + 1
+    return -1
+
+def _get_docstring_end_index(func_code_lines, docstring_start_index):
+    """ Get End of Docstring line # """
+    if func_code_lines[docstring_start_index].count('"""') == 2:
+        return docstring_start_index
+    
+    for i,l in enumerate(func_code_lines[docstring_start_index+1:],
+                         start=docstring_start_index+1):
+        if '"""' in func_code_lines[i]:
+            return i
+
+def _has_docstring(func_code_lines, function_name):
+    """ Returns True if func_code_lines has a docstring, false otherwise """
+    if len(func_code_lines) == 0:
+        return False
+
+    docstring_start_index = _get_docstring_start_index(func_code_lines,
+                                                       function_name)
+
+    return docstring_start_index != -1 and '"""' in func_code_lines[docstring_start_index]
+
+def get_function_docstring(filepath, function_name):
+    """
+    Return the docstring lines of the function
+    """
+    func_code_lines = get_function_code(filepath, function_name)
+    
+    if not _has_docstring(func_code_lines, function_name):
+        return []
+    
+    docstring_start_index = _get_docstring_start_index(func_code_lines, function_name)
+
+    # get ending_docstring_index
+    docstring_end_index = _get_docstring_end_index(func_code_lines,
+                                                   docstring_start_index)
+
+    return func_code_lines[docstring_start_index:docstring_end_index+1]
