@@ -5,6 +5,7 @@ import time
 from proflib.models.frame_list import FrameList
 from proflib.models.frame import Frame
 from outlib.lib.wout import output_to_logger
+import coverage
 
 # Can learn about all of the variables the frame object has at this page:
 #   http://docs.python.org/2/library/inspect.html#inspect-types
@@ -13,6 +14,22 @@ from outlib.lib.wout import output_to_logger
 #   prof wrapper calling another function with the
 #   prof wrapper
 Lock = 0
+
+import contextlib
+@contextlib.contextmanager
+def capture():
+    import sys
+    from cStringIO import StringIO
+    oldout,olderr = sys.stdout, sys.stderr
+    try:
+        out=[StringIO(), StringIO()]
+        sys.stdout,sys.stderr = out
+        yield out
+    finally:
+        sys.stdout,sys.stderr = oldout, olderr
+        out[0] = out[0].getvalue()
+        out[1] = out[1].getvalue()
+        #import pdb;pdb.set_trace()
 
 
 def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
@@ -23,6 +40,7 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
 
         """
         func.frame_list = FrameList()
+
         global Lock
         if Lock is None:
             Lock = 0
@@ -56,7 +74,10 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
                 Lock = 1;
 
             # Start the Profiler
+            #cov = coverage.coverage()
+            #cov.start()
             sys.setprofile(tracer)
+
             try:
                 response = func(*args, **kwargs)
             finally:
@@ -65,6 +86,8 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
 
             # Build a hierarchy of all the frames calling one another
             func.frame_list.build_hierarchy()
+            #cov.stop()
+            #cov.save()
 
             # Print output to Logger
             output_to_logger(func.frame_list.to_json_output( \
@@ -73,6 +96,13 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
                 include_variables=include_variables,
                 exclude_keys=exclude_keys,
                 exclude_variables=exclude_variables))
+            
+            #import subprocess
+            #proc = subprocess.Popen(["python", "-c", "cov.xml_report(outfile='-')"], stdout=subprocess.PIPE)
+            #out = proc.communicate()[0]
+            #import pdb;pdb.set_trace()
+            #with capture() as out:
+            #    cov.xml_report(outfile='-')
 
             # Reset Things
             func.frame_list = FrameList()
