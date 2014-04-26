@@ -4,7 +4,7 @@ import os
 import time
 from proflib.models.frame_list import FrameList
 from proflib.models.frame import Frame
-from outlib.lib.wout import output_to_logger
+from outlib.lib.wout import output_to_logger, output_to_file
 import coverage
 
 # Can learn about all of the variables the frame object has at this page:
@@ -14,6 +14,7 @@ import coverage
 #   prof wrapper calling another function with the
 #   prof wrapper
 Lock = 0
+Write_Called = 0
 
 import contextlib
 @contextlib.contextmanager
@@ -89,13 +90,28 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
             #cov.stop()
             #cov.save()
 
+            global Write_Called
+            Write_Called += 1
+
             # Print output to Logger
+            """
             output_to_logger(func.frame_list.to_json_output( \
                 depth=depth,
                 include_keys=include_keys,
                 include_variables=include_variables,
                 exclude_keys=exclude_keys,
                 exclude_variables=exclude_variables))
+            """
+
+            # Print output to File
+            output_to_file('/home/surveymonkey/Desktop/test_%s.json' %(Write_Called),
+                            func.frame_list.to_json_output( \
+                                depth=depth,
+                                include_keys=include_keys,
+                                include_variables=include_variables,
+                                exclude_keys=exclude_keys,
+                                exclude_variables=exclude_variables),
+                            append=False)
             
             #import subprocess
             #proc = subprocess.Popen(["python", "-c", "cov.xml_report(outfile='-')"], stdout=subprocess.PIPE)
