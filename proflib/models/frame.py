@@ -23,20 +23,21 @@ class Frame(object):
     #   * Maybe add something between children functions
     #   * Should probably be in the format library
 
-    def __init__(self, py_frame, children=None, parent=None, pos=0):
+    def __init__(self, py_frame, arg=None, children=None, parent=None, pos=0):
         """
         Init method for the Frame class
         """
-        self._init_with_py_frame(py_frame, children=children, parent=parent,
+        self._init_with_py_frame(py_frame, arg, children=children, parent=parent,
                                     pos=pos)
 
-    def _init_with_py_frame(self, py_frame, children=None, parent=None,
+    def _init_with_py_frame(self, py_frame, arg=None, children=None, parent=None,
                                 pos=0):
         """
         Initializes the frame object with the Python Frame Object provided.
         """
         self.wrapper_function_name = 'wrapped'
 
+        self.return_value = arg
         self.parent = parent
         self.children = children or []
         self.py_frame = py_frame
@@ -156,6 +157,13 @@ class Frame(object):
         return self._pos_called_in
 
     @property
+    def return_value(self):
+        """
+        Return value of the frame
+        """
+        return self._return_value
+
+    @property
     def stack_trace(self):
         """
         Returns the Python Frame Object associated with this Frame
@@ -198,6 +206,13 @@ class Frame(object):
         Sets the value for self.py_frame
         """
         self._py_frame = value
+
+    @return_value.setter
+    def return_value(self, value):
+        """
+        Sets the value for self.return_value
+        """
+        self._return_value = value
 
     @frame_stack_trace.setter
     def frame_stack_trace(self, value):
@@ -295,6 +310,7 @@ class Frame(object):
             'local_variables': local_variables,
             'parent': self.parent,
             'pos_called_in': self.pos_called_in,
+            'return_value': self.return_value,
             'stack_trace': self.stack_trace,
             'time': self.time,
         }

@@ -59,7 +59,7 @@ class FrameList(object):
         return self.ordered_functions_list[::-1]
 
     #////////////////////////////Public Methods////////////////////////////////
-    def add_frame(self, py_frame):
+    def add_frame(self, py_frame, arg=None):
         """
         Adds a frame to this class, adding it to the:
             * ordered_functions_list 
@@ -70,7 +70,7 @@ class FrameList(object):
         function_name = py_frame.f_code.co_name
         key = get_function_key(function_name, self.num_frames)
         self._append_key_to_ordered_functions_list(key)
-        self._add_py_frame_to_frame_map(key, py_frame)
+        self._add_py_frame_to_frame_map(key, py_frame, arg=arg)
 
     def build_hierarchy(self):
         """
@@ -137,12 +137,12 @@ class FrameList(object):
 
     #------------------------- Private Helper Functions -----------------------
 
-    def _add_py_frame_to_frame_map(self, key, py_frame):
+    def _add_py_frame_to_frame_map(self, key, py_frame, arg=None):
         """
         Turns the py_frame into an encapsulated frame object, then adds the
         frame to the frame_map
         """
-        self._frame_map[key] = Frame(py_frame, pos=self.num_frames)
+        self._frame_map[key] = Frame(py_frame, arg=arg, pos=self.num_frames)
         
     def _append_key_to_ordered_functions_list(self, function_key):
         """
