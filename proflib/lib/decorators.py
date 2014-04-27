@@ -104,7 +104,7 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
             """
 
             # Print output to File
-            output_to_file('/home/surveymonkey/Desktop/test_%s.json' %(Write_Called),
+            output_to_file('/opt/webapp/proflib_visualizer/src/proflib_visualizer/proflib_visualizer/static/json/proflib_json_files/test_%s.json' %(Write_Called),
                             func.frame_list.to_json_output( \
                                 depth=depth,
                                 include_keys=include_keys,
