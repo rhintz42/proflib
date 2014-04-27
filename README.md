@@ -32,9 +32,9 @@ Installation
 ------------
 To install ProfLib you'll have to issue 2 commands from the terminal
 
-    `pip install git+git://github.com/rhintz42/outlib.git#egg=outlib`
-    `pip install git+git://github.com/rhintz42/parsefilelib.git#egg=parsefilelib`
-    `pip install git+git://github.com/rhintz42/proflib.git#egg=proflib`
+    pip install git+git://github.com/rhintz42/outlib.git#egg=outlib
+    pip install git+git://github.com/rhintz42/parsefilelib.git#egg=parsefilelib
+    pip install git+git://github.com/rhintz42/proflib.git#egg=proflib
 
 OutLib and ParseFileLib are dependencies for ProfLib hosted on github
 
