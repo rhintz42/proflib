@@ -55,6 +55,11 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
                 this frame.
             """
             # THE ARG ARGUMENT SHOULD BE THE RETURN VALUE FROM THE FUNCTION
+            # According to the sys docs: https://docs.python.org/2/library/sys.html
+            #   When the `event` is == to `return`, "`arg` is the value that
+            #   will be returned, or `None` if the event is caused by an
+            #   exception being raised." So this should be correct the way I'm
+            #   using it
             if event=='return':
                 func.frame_list.add_frame(frame, arg=arg)
 
