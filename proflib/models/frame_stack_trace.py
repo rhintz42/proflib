@@ -1,11 +1,8 @@
-import sys
-import os
-import time
 import traceback
 
 class FrameStackTrace(object):
     """
-    Encapsulates the Code of a function
+    Encapsulates the Stack Trace of a function
     """
 
     def __init__(self, frame):
