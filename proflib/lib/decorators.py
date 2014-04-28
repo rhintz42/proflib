@@ -7,6 +7,7 @@ from proflib.models.frame import Frame
 from outlib.lib.wout import output_to_logger, output_to_file
 import coverage
 import logging
+import linecache
 
 # Can learn about all of the variables the frame object has at this page:
 #   http://docs.python.org/2/library/inspect.html#inspect-types
@@ -59,8 +60,37 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
             #   will be returned, or `None` if the event is caused by an
             #   exception being raised." So this should be correct the way I'm
             #   using it
+            if event == "line":
+                lineno = frame.f_lineno
+                filename = frame.f_globals["__file__"]
+                if (filename.endswith(".pyc") or
+                    filename.endswith(".pyo")):
+                    filename = filename[:-1]
+                name = frame.f_globals["__name__"]
+                line = linecache.getline(filename, lineno)
+                print "%s:%s: %s" % (name, lineno, line.rstrip())
             if event=='return':
                 func.frame_list.add_frame(frame, arg=arg)
+            return tracer
+
+        """
+        # This comes from here: http://www.dalkescientific.com/writings/diary/archive/2005/04/20/tracing_python_code.html
+        # The issue was I needed to return the trace function
+        import sys
+        import linecache
+
+        def traceit(frame, event, arg):
+            if event == "line":
+                lineno = frame.f_lineno
+                filename = frame.f_globals["__file__"]
+                if (filename.endswith(".pyc") or
+                    filename.endswith(".pyo")):
+                    filename = filename[:-1]
+                name = frame.f_globals["__name__"]
+                line = linecache.getline(filename, lineno)
+                print "%s:%s: %s" % (name, lineno, line.rstrip())
+            return traceit
+        """
 
         @wraps(func)    # TRACE WRAPPER
         def wrapped(*args, **kwargs):
@@ -86,13 +116,15 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
             # Start the Profiler
             #cov = coverage.coverage()
             #cov.start()
-            sys.setprofile(tracer)
+            #sys.setprofile(tracer)
+            sys.settrace(tracer)
 
             try:
                 response = func(*args, **kwargs)
             finally:
                 # Stop the Profiler
-                sys.setprofile(None)
+                #sys.setprofile(None)
+                sys.settrace(None)
 
             # Build a hierarchy of all the frames calling one another
             func.frame_list.build_hierarchy()
