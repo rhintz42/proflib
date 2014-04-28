@@ -123,7 +123,7 @@ class Frame(object):
         """
         Return the function name of the function in this frame
         """
-        return self.function_details.function_name
+        return self.function_details.name
 
     @property
     def line_number(self):
