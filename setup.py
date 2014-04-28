@@ -19,11 +19,13 @@ requires = [
     'pyramid_chameleon',
     'pyramid_debugtoolbar',
     'waitress',
-    'outlib'
+    'outlib',
+    'parsefilelib',
     ]
 
 github_dependencies = [
-    'git+git://github.com/rhintz42/outlib.git#egg=outlib'
+    'git+git://github.com/rhintz42/outlib.git#egg=outlib',
+    'git+git://github.com/rhintz42/parsefilelib.git#egg=parsefilelib',
 ]
 
 setup(name='proflib',
