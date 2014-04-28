@@ -25,6 +25,9 @@ class FunctionDetails(BaseLinesObj):
     """ GETTERS """
     @property
     def has_file(self):
+        """
+        Return whether this class has a parent_file or not
+        """
         if self.parent_file:
             return True
         return False

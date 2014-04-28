@@ -7,10 +7,6 @@ from proflib.lib.py_frame import get_py_frame_locals, \
 from proflib.models.function_details import FunctionDetails
 from proflib.models.frame_stack_trace import FrameStackTrace
 
-# TODO: py_ represents all of the objectss saved that are lower-level python
-#   objects
-#   * Example: python's frame object is called py_frame
-
 class Frame(object):
     """
     Encapsulates the Python Frame Object and contains all the local variables
@@ -272,6 +268,10 @@ class Frame(object):
             self.children.insert(0, frame)
 
     def _get_local_variables_to_include(self, include_variables):
+        """
+        Accepts a list of local variables that you want to include in your
+            output
+        """
         if not include_variables:
             return self.local_variables
 

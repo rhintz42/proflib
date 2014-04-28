@@ -16,7 +16,7 @@ class FrameList(object):
     @property
     def frame_map(self):
         """
-        Returns the frame_map
+        Return the frame_map
 
         The _frame_map consists of:
         * Keys: The keys are the frame's function_name & position finished in
@@ -27,7 +27,7 @@ class FrameList(object):
     @property
     def ordered_functions_list(self):
         """
-        Returns the _ordered_functions_list
+        Return the _ordered_functions_list
 
         The _ordered_functions_list is list of all the function_key's, ordered
             by when the function finished execution (i.e. returned)
@@ -37,7 +37,7 @@ class FrameList(object):
     @property
     def num_frames(self):
         """
-        Returns the length of the _ordered_functions_list, which is the number
+        Return the length of the _ordered_functions_list, which is the number
             of Frames Created
         """
         return len(self.ordered_functions_list)
@@ -45,7 +45,7 @@ class FrameList(object):
     @property
     def root_frames(self):
         """
-        Returns all of the root_frames, or all the frames that had the wrapped
+        Return all of the root_frames, or all the frames that had the wrapped
             function on them that don't have an ancestor that had the wrapped
             function applied to them
         """
@@ -58,10 +58,33 @@ class FrameList(object):
         """
         return self.ordered_functions_list[::-1]
 
+    """ SETTERS """
+
+    @frame_map.setter
+    def frame_map(self, value):
+        """
+        Set the _frame_map property
+        """
+        self._frame_map = value
+    
+    @ordered_functions_list.setter
+    def ordered_functions_list(self, value):
+        """
+        Set the _ordered_functions_list property
+        """
+        self._ordered_functions_list = value
+
+    @root_frames.setter
+    def root_frames(self, value):
+        """
+        Set the _root_frames property
+        """
+        self._root_frames = value
+
     #////////////////////////////Public Methods////////////////////////////////
     def add_frame(self, py_frame, arg=None):
         """
-        Adds a frame to this class, adding it to the:
+        Add a frame to this class, adding it to the:
             * ordered_functions_list 
             * frame_map
         When adding to the frame_map, creates a new Frame object, encapsulating
@@ -91,7 +114,7 @@ class FrameList(object):
 
         root_key = reversed_order_list[0]
         root_frame = self.frame_map[root_key]
-        self._root_frames.append(root_frame)
+        self.root_frames.append(root_frame)
         pos = 0
 
         while pos < self.num_frames:
@@ -142,13 +165,13 @@ class FrameList(object):
         Turns the py_frame into an encapsulated frame object, then adds the
         frame to the frame_map
         """
-        self._frame_map[key] = Frame(py_frame, arg=arg, pos=self.num_frames)
+        self.frame_map[key] = Frame(py_frame, arg=arg, pos=self.num_frames)
         
     def _append_key_to_ordered_functions_list(self, function_key):
         """
         Adds the function_key to the ordered_functions_list
         """
-        self._ordered_functions_list.append(function_key)
+        self.ordered_functions_list.append(function_key)
 
     def _append_to_root_frames(self, root_frame):
         """
@@ -156,16 +179,16 @@ class FrameList(object):
 
         Returns self.root_frames
         """
-        self._root_frames.append(root_frame)
+        self.root_frames.append(root_frame)
         return self.root_frames
 
     def __init__(self, *args, **kwargs):
         """
         The init function for the FrameList class
         """
-        self._ordered_functions_list = []
-        self._frame_map = {}
-        self._root_frames = []
+        self.ordered_functions_list = []
+        self.frame_map = {}
+        self.root_frames = []
 
     def _rec_build_hierarchy(self, reversed_order_list, root_frame, pos):
         """
