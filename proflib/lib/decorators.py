@@ -32,7 +32,6 @@ def capture():
         sys.stdout,sys.stderr = oldout, olderr
         out[0] = out[0].getvalue()
         out[1] = out[1].getvalue()
-        #import pdb;pdb.set_trace()
 
 
 def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
@@ -126,7 +125,6 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
             #import subprocess
             #proc = subprocess.Popen(["python", "-c", "cov.xml_report(outfile='-')"], stdout=subprocess.PIPE)
             #out = proc.communicate()[0]
-            #import pdb;pdb.set_trace()
             #with capture() as out:
             #    cov.xml_report(outfile='-')
 
