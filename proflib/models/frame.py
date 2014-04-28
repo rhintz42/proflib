@@ -281,7 +281,22 @@ class Frame(object):
                 local_variables[key] = value
 
         return local_variables
-    
+ 
+    def _get_local_variables_to_exclude(self, exclude_variables):
+        """
+        Accepts a list of local variables that you want to include in your
+            output
+        """
+        if not exclude_variables:
+            return self.local_variables
+
+        local_variables = {}
+        for key,value in self.local_variables.items():
+            if key not in exclude_variables:
+                local_variables[key] = value
+
+        return local_variables   
+
     def to_dict(self, depth=2, include_keys=None, include_variables=None,
                 exclude_keys=None, exclude_variables=None):
         """
@@ -294,23 +309,57 @@ class Frame(object):
             return None
         new_depth = depth - 1
 
-        local_variables = self._get_local_variables_to_include(include_variables)
+        if include_variables:
+            local_variables = self._get_local_variables_to_include(include_variables)
+        elif exclude_variables:
+            local_variables = self._get_local_variables_to_exclude(exclude_variables)
+        else:
+            local_variables = self.local_variables
 
-        return {
-            'called_by_function_name': self.called_by_function_name,
-            'children': [c.to_dict( depth=new_depth, include_keys=include_keys, \
-                                    include_variables=include_variables, \
-                                    exclude_keys=exclude_keys, \
-                                    exclude_variables=exclude_variables) for c in self.children],
-            'code': self.code,
-            'docstring': self.docstring,
-            'file_path': self.file_path,
-            'function_name': self.function_name,
-            'line_number': self.line_number,
-            'local_variables': local_variables,
-            'parent': self.parent,
-            'pos_called_in': self.pos_called_in,
-            'return_value': self.return_value,
-            'stack_trace': self.stack_trace,
-            'time': self.time,
-        }
+        if include_keys:
+            dict_obj = {}
+            for key in include_keys:
+                if key == 'children':
+                    # Should put this in function
+                    dict_obj['children'] = [c.to_dict( depth=new_depth, include_keys=include_keys, \
+                                            include_variables=include_variables, \
+                                            exclude_keys=exclude_keys, \
+                                            exclude_variables=exclude_variables) for c in self.children]
+                else:
+                    dict_obj[key] = getattr(self, key)
+            return dict_obj
+
+        dict_obj = {
+                'called_by_function_name': self.called_by_function_name,
+                'children': [c.to_dict( depth=new_depth, include_keys=include_keys, \
+                                        include_variables=include_variables, \
+                                        exclude_keys=exclude_keys, \
+                                        exclude_variables=exclude_variables) for c in self.children],
+                'code': self.code,
+                'docstring': self.docstring,
+                'file_path': self.file_path,
+                'function_name': self.function_name,
+                'line_number': self.line_number,
+                'local_variables': local_variables,
+                'parent': self.parent,
+                'pos_called_in': self.pos_called_in,
+                'return_value': self.return_value,
+                'stack_trace': self.stack_trace,
+                'time': self.time,
+            }
+
+        if not exclude_keys:
+            return dict_obj
+
+        dict_obj2 = {}
+        for key in dict_obj:
+            if key not in exclude_keys:
+                if key == 'children':
+                    # Should put this in function
+                    dict_obj2['children'] = [c.to_dict( depth=new_depth, include_keys=include_keys, \
+                                            include_variables=include_variables, \
+                                            exclude_keys=exclude_keys, \
+                                            exclude_variables=exclude_variables) for c in self.children]
+                else:
+                    dict_obj2[key] = getattr(self, key)
+        return dict_obj2

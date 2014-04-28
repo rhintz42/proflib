@@ -29,7 +29,7 @@ github_dependencies = [
 ]
 
 setup(name='proflib',
-      version='1.0.3',
+      version='1.0.4',
       description='proflib',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[

@@ -12,13 +12,13 @@ def fo():
     return c
 
 
-@prof(1)
+#@prof(1)
 def ba(var):
     d = var
     return d
 
 
-@prof()
+#@prof()
 def tt():
     z = 20
     f = fo()
@@ -48,7 +48,9 @@ def my_view(request):
     return {'project': 'proflib'}
 
 
-@prof(3)
+@prof(3, include_keys=['local_variables', 'function_name','return_value', 'children', 'code'],
+        exclude_keys=['local_variables', 'function_name','return_value', 'children', 'code'],
+        include_variables=['x'], exclude_variables=["x"])
 def foo():
     """ foo here (A bit bigger than the others) """
     a = 10
@@ -60,7 +62,7 @@ def foo():
     return a
 
 #@otherprof
-@prof(2)
+#@prof(2)
 def longer_docstring():
     """
     This is the docstring for the function longer_docstring

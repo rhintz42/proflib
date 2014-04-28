@@ -30,7 +30,7 @@ search through to see what variables may be valid to use as your mocks.
 
 Installation
 ------------
-To install ProfLib you'll have to issue 2 commands from the terminal
+To install ProfLib you'll have to issue 3 commands from the terminal
 
     pip install git+git://github.com/rhintz42/outlib.git#egg=outlib
     pip install git+git://github.com/rhintz42/parsefilelib.git#egg=parsefilelib
