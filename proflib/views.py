@@ -48,8 +48,8 @@ def my_view(request):
     return {'project': 'proflib'}
 
 
-@prof(3, include_keys=['local_variables', 'function_name','return_value', 'children', 'code'],
-        exclude_keys=['local_variables', 'function_name','return_value', 'children', 'code'],
+#@prof(3)
+@prof(1, include_keys=['local_variables', 'function_name','return_value', 'children', 'code'],
         include_variables=['x'], exclude_variables=["x"])
 def foo():
     """ foo here (A bit bigger than the others) """

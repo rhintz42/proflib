@@ -17,6 +17,7 @@ import linecache
 #   prof wrapper
 Lock = 0
 Write_Called = 0
+Depth = 0
 
 # Used for parsing xml output from std.out to a variable
 import contextlib
@@ -35,7 +36,7 @@ def capture():
         out[1] = out[1].getvalue()
 
 
-def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
+def prof(depth=3, include_keys=None, include_variables=None, exclude_keys=None,
             exclude_variables=None):
     def actual_decorator(func):
         """ 
@@ -60,16 +61,28 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
             #   will be returned, or `None` if the event is caused by an
             #   exception being raised." So this should be correct the way I'm
             #   using it
-            if event == "line":
+            #if event == "line":
+            global Depth
+            if event == "call":
+                Depth += 1
+            if event == "return":
+                if Depth > depth:
+                    """
+                    lineno = frame.f_lineno
+                    #filename = frame.f_globals["__file__"]
+                    #if (filename.endswith(".pyc") or
+                    #    filename.endswith(".pyo")):
+                    #    filename = filename[:-1]
+                    name = frame.f_globals["__name__"]
+                    #line = linecache.getline(filename, lineno)
+                    #print "%s:%s: %s" % (name, lineno, line.rstrip())
+                    print "%s:%s: depth=%s: Depth=%s" % (name, lineno, depth, Depth)
+                    """
+                    Depth -= 1
+                    return
                 lineno = frame.f_lineno
-                filename = frame.f_globals["__file__"]
-                if (filename.endswith(".pyc") or
-                    filename.endswith(".pyo")):
-                    filename = filename[:-1]
                 name = frame.f_globals["__name__"]
-                line = linecache.getline(filename, lineno)
-                print "%s:%s: %s" % (name, lineno, line.rstrip())
-            if event=='return':
+                Depth -= 1
                 func.frame_list.add_frame(frame, arg=arg)
             return tracer
 
@@ -102,6 +115,9 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
             Clear the data saved in func after done
             """
             global Lock
+            global Depth
+            Depth += 1
+
             if Lock == 1:
                 try:
                     # THIS *SHOULD BE* THE RETURN FROM THE FUNCTION JUST CALLED
@@ -109,6 +125,7 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
                     #output_to_logger(res)
                 except:
                     res = None
+
                 return res
             else:
                 Lock = 1;
@@ -162,6 +179,7 @@ def prof(depth=2, include_keys=None, include_variables=None, exclude_keys=None,
 
             # Reset Things
             func.frame_list = FrameList()
+            Depth = 0
             Lock = 0
 
             return response
