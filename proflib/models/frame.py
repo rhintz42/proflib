@@ -316,6 +316,9 @@ class Frame(object):
         else:
             local_variables = self.local_variables
 
+        # Need to have a `fetch_all_local_variables` so can get all local
+        #   variables
+
         if include_keys:
             dict_obj = {}
             for key in include_keys:
@@ -325,6 +328,9 @@ class Frame(object):
                                             include_variables=include_variables, \
                                             exclude_keys=exclude_keys, \
                                             exclude_variables=exclude_variables) for c in self.children]
+                if key == 'local_variables':
+                    # Should put this in function
+                    dict_obj['local_variables'] = local_variables
                 else:
                     dict_obj[key] = getattr(self, key)
             return dict_obj
