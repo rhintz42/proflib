@@ -43,7 +43,12 @@ def prof(depth=3, include_keys=None, include_variables=None, exclude_keys=None,
         This decorator will check if my wrapper works.
 
         """
+        #try:
         func.frame_list = FrameList()
+        #except AttributeError:
+        #    if type(func).__name__ == 'classmethod':
+        #        func = func.__func__
+        #        func.frame_list = FrameList()
 
         global Lock
         if Lock is None:
@@ -152,12 +157,18 @@ def prof(depth=3, include_keys=None, include_variables=None, exclude_keys=None,
             Write_Called += 1
 
             # Print output to Logger
-            output_to_logger(func.frame_list.to_json_output( \
+            res = func.frame_list.to_json_output( \
                 depth=depth,
                 include_keys=include_keys,
                 include_variables=include_variables,
                 exclude_keys=exclude_keys,
-                exclude_variables=exclude_variables))
+                exclude_variables=exclude_variables)
+
+            try:
+                output_to_logger(res)
+            except:
+                # Something went wrong with the logger
+                a = 10
 
             # Print output to File
             """
