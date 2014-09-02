@@ -3,6 +3,7 @@ try:
 except:
     import unittest
 import sys
+import os
 
 
 # TODO: Make this a more robust thing that will look for file in tests and look
@@ -10,7 +11,7 @@ import sys
 class FrameCodeMock(object):
     def __init__(self, *args, **kwargs):
         self.co_name = kwargs['function_name'] if 'function_name' in kwargs else 'foo'
-        self.co_filename = '/opt/src/proflib/proflib/views.py'
+        self.co_filename = '%s/views.py' % (os.path.dirname(os.path.realpath(__file__)))
         self.co_firstlineno = 25
         
 
@@ -40,7 +41,7 @@ class TestFrame(unittest.TestCase):
 
         frame = Frame(FrameMock())
 
-        assert frame.file_path == '/opt/src/proflib/proflib/views.py'
+        assert 'views.py' in frame.file_path
     
     def test_frame_file_name(self):
         from proflib.models.frame import Frame
