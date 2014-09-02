@@ -43,12 +43,7 @@ def prof(depth=3, include_keys=None, include_variables=None, exclude_keys=None,
         This decorator will check if my wrapper works.
 
         """
-        #try:
         func.frame_list = FrameList()
-        #except AttributeError:
-        #    if type(func).__name__ == 'classmethod':
-        #        func = func.__func__
-        #        func.frame_list = FrameList()
 
         global Lock
         if Lock is None:
