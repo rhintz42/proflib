@@ -8,7 +8,7 @@ import sys
 class FrameCodeMock(object):
     def __init__(self, *args, **kwargs):
         self.co_name = kwargs['function_name'] if 'function_name' in kwargs else 'foo'
-        self.co_filename = '/opt/webapp/proflib/src/proflib/proflib/views.py'
+        self.co_filename = '/opt/src/proflib/proflib/views.py'
         self.co_firstlineno = 25
         
 
@@ -37,7 +37,7 @@ class TestFrame(unittest.TestCase):
 
         frame = Frame(FrameMock())
 
-        assert frame.file_path == '/opt/webapp/proflib/src/proflib/proflib/views.py'
+        assert frame.file_path == '/opt/src/proflib/proflib/views.py'
     
     def test_frame_file_name(self):
         from proflib.models.frame import Frame
