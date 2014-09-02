@@ -5,6 +5,8 @@ except:
 import sys
 
 
+# TODO: Make this a more robust thing that will look for file in tests and look
+#   by relative path
 class FrameCodeMock(object):
     def __init__(self, *args, **kwargs):
         self.co_name = kwargs['function_name'] if 'function_name' in kwargs else 'foo'
@@ -32,6 +34,7 @@ class TestFrame(unittest.TestCase):
         assert frame
 
     
+    # TODO: Make this test go by relative path instead of long path
     def test_frame_file_path(self):
         from proflib.models.frame import Frame
 
